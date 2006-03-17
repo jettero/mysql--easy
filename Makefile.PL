@@ -3,7 +3,7 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'NAME'		    => 'SQLlite::Easy',
-    'VERSION_FROM'	=> 'Easy.pm',
-    'PREREQ_PM'     => { DBI => 0, 'DBD::SQLiute' => 0 },
+    'NAME'         => 'DBI::Easy::SQLite',
+    'VERSION_FROM' => 'SQLite.pm',
+    'PREREQ_PM'    => { DBI => 0, 'DBD::SQLite' => 0 },
 );

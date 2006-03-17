@@ -1,12 +1,13 @@
-# $Id: Easy.pm,v 1.1 2006/03/17 18:58:57 jettero Exp $
+# $Id: SQLite.pm,v 1.1 2006/03/17 19:17:37 jettero Exp $
 
 package DBI::Easy::SQLite;
 
 use strict;
 use DBI;
 use Carp;
-
 use base "DBI";
+
+our $VERSION = "0.1";
 
 sub new {
     my $class = shift;
