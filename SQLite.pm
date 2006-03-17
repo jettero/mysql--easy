@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.1 2006/03/17 19:17:37 jettero Exp $
+# $Id: SQLite.pm,v 1.2 2006/03/17 19:22:56 jettero Exp $
 
 package DBI::Easy::SQLite;
 
@@ -7,11 +7,11 @@ use DBI;
 use Carp;
 use base "DBI";
 
-our $VERSION = "0.1";
+our $VERSION = "0.01";
 
 sub new {
     my $class = shift;
-    my $file  = shift; croak "you must pass a filename to $class";
+    my $file  = shift; croak "you must pass a filename to $class" unless length $file;
     my $this;
     
     eval { $this = DBI->connect("dbi:SQLite:$file","","") };
