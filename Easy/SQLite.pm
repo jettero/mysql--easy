@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.4 2006/03/29 20:16:53 jettero Exp $
+# $Id: SQLite.pm,v 1.5 2006/03/29 20:19:11 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -268,9 +268,10 @@ DBI::Easy::SQLite - Perl extension to make your base code kinda pretty.
 
       $q->execute($s) or die $dbo->errstr;
       # SQLite prepare errors are actually croaks() that would cause your
-      # program to stop executing, for consistancy with Easy::MySQL, they
-      # are instead propagated as undefs from execute(), so errstr() will
-      # probably return a prepare error on this or die.  curious.
+      # program to stop executing.  For consistancy with Easy::MySQL, they
+      # are instead propagated as undefs from execute(), such that errstr()
+      # will probably return a prepare error on this execute-or-die clause
+      # -- that is, if there is any error to be had here.
 
       print "@a" while @a = fetchrow_array $q;
   }

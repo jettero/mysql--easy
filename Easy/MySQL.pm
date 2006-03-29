@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.3 2006/03/29 17:57:29 jettero Exp $
+# $Id: MySQL.pm,v 1.4 2006/03/29 20:16:53 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::MySQL::sth;
@@ -353,11 +353,17 @@ DBI::Easy::MySQL - Perl extension to make your base code kinda pretty.
       "msft"
   );
 
+  my $q = $dbo->ready("select * from ohlcv where symbol=?");
   for my $s (@$symbols) {
-      my $q = $dbo->ready("select * from ohlcv where symbol=?");
       my @a;
 
-      $q->execute($s)
+      $q->execute($s) or die $dbo->errstr;
+      # Although the regular DBI will reconnect to the server when it loses
+      # it's connection, any queries you had previously prepared will fail
+      # until it reconnects.  easy::mysql handles all that for you so this
+      # execute() will always work, if it's syntactically correct, even if
+      # your server connection was lost since the last ready();
+
       print "@a" while @a = fetchrow_array $q;
   }
 
