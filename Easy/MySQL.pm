@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.2 2006/03/29 14:07:41 jettero Exp $
+# $Id: MySQL.pm,v 1.1 2006/03/29 14:27:12 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::MySQL::sth;
@@ -98,7 +98,6 @@ use AutoLoader;
 
 use DBI;
 
-our $VERSION = "1.33";
 our $AUTOLOAD;
 
 1;

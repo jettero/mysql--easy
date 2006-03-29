@@ -1,0 +1,31 @@
+
+Just what is this and why did you write it?
+
+Well, I wrote MySQL::Easy (bad name, I know) because I didn't like all the
+work I had to do maintaining and working with the DBI methods to keep my
+mysql connection alive.  I found I had to do the same simply lines of code
+over and over and I didn't like it.  That is all.
+
+I did this renaming to DBI::Easy::XxXxXxX when I decided that I wanted an
+identical SQLite module.
+
+Examples:
+
+my $dbh = DBI->connect("DBI::mysql:testdb:host=something:port=something;opt;opt;opt");
+my $dbo = new DBI::Easy::MySQL("testdb");  
+
+Easy reads your $ENV{HOME}/.my.cnf for unp when you don't specify the
+username/pass directly.  Handy?!?!  Yes.
+
+my $sth1 = $dbh->prepare("select something from something where something=something");
+my $sth2 = $dbo->ready("select something from something where something=something");
+
+$sth1 looks pretty much teh same as $sth2... but $sth2 will check to see if
+the connection is still there and if it isn't, will rebuild the connection
+and re-prepare the sth automatically.
+
+Other than these two little things, this package is probably not necessary.
+However I'm aware of literally dozens that use it -- including myself -- so
+I continue to maintain it.
+
+- Paul
