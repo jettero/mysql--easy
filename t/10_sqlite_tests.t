@@ -11,7 +11,7 @@ if( -f $df ) {
     unlink $df or die "couldn't unlink $df: $!"
 }
 
-plan tests => 23;
+plan tests => 24;
 
 my $dbo = new DBI::Easy::SQLite($df);
 
@@ -29,6 +29,7 @@ if( execute $sth ) {
 
 $dbo->do("create table test( supz int )") or die $dbo->errstr; ok 1;
 
+my $bor = $dbo->ready("insert into test set supz=?");
 my $ins = $dbo->ready("insert into test(supz) values(?)");
 my $get = $dbo->ready("select * from test order by supz");
 
@@ -40,4 +41,11 @@ my $x = 1;
 execute $get or die $dbo->errstr;
 while( my $h = fetchrow_hashref $get ) {
     ok( $h->{supz}, $x ++ );
+}
+
+if( $bor->execute(37) ) { 
+    ok(0) 
+
+} else {
+    ok( $dbo->errstr, qr(fuck!) );
 }

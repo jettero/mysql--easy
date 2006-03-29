@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.5 2006/03/29 20:19:11 jettero Exp $
+# $Id: SQLite.pm,v 1.6 2006/03/29 20:25:28 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -23,6 +23,8 @@ sub new {
     $this->{sth} = $dbi->prepare( $statement );
     $SIG{__WARN__} = $e;
 
+    $this->{e} = $main::___ERR;
+
     return $this;
 }
 # }}}
@@ -32,7 +34,12 @@ sub AUTOLOAD {
     my $sub  = $AUTOLOAD;
     my $wa   = wantarray;
 
-    return undef unless $this->{sth};
+    unless( $this->{sth} ) {
+        $main::___ERR = $this->{e} if $this->{e};
+        $main::___ERR = $this->{e} = "something happened because there's no statement handle... no idea what though."
+            unless $main::___ERR;
+        return undef unless $this->{sth};
+    }
     # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
 
     $sub = $1 if $sub =~ m/::(\w+)$/;
@@ -43,12 +50,21 @@ sub AUTOLOAD {
         my @ret;
         my $ret;
 
+        undef $main::___ERR;
+
+        my $e = $SIG{__WARN__}; $SIG{__WARN__} = sub { $main::___ERR = shift };
+
         if( $wa ) {
             @ret = $this->{sth}->$sub( @_ );
 
         } else {
             $ret = $this->{sth}->$sub( @_ );
         }
+
+        $SIG{__WARN__} = $e;
+
+        $this->{e} = $main::___ERR if $main::____ERR;
+        $main::___ERR = $this->{e} if $this->{e};
 
         return ($wa ? @ret : $ret);
 
