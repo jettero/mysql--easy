@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.4 2006/03/29 20:16:53 jettero Exp $
+# $Id: MySQL.pm,v 1.6 2006/03/29 20:43:45 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::MySQL::sth;
@@ -336,7 +336,7 @@ __END__
 
 =head1 NAME
 
-DBI::Easy::MySQL - Perl extension to make your base code kinda pretty.
+DBI::Easy::MySQL - Perl extension to handle various mundane DBI session related things specific to mysql.
 
 =head1 SYNOPSIS
 
