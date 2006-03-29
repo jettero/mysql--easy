@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.2 2006/03/29 15:04:47 jettero Exp $
+# $Id: MySQL.pm,v 1.3 2006/03/29 17:57:29 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::MySQL::sth;
@@ -26,7 +26,8 @@ sub AUTOLOAD {
     my $sub  = $AUTOLOAD;
     my $wa   = wantarray;
 
-    croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
+    return undef unless $this->{sth};
+    # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
 
     $sub = $1 if $sub =~ m/::(\w+)$/;
 
@@ -174,11 +175,7 @@ sub new {
 sub do {
     my $this = shift; return unless @_;
 
-    my $e = $SIG{__WARN__}; $SIG{__WARN__} = sub {};
     my $r = $this->ready(shift)->execute(@_) or croak $this->errstr;
-
-    $SIG{__WARN__} = $e;
-
     return $r;
 }
 # }}}

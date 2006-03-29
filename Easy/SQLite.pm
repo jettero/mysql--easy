@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.2 2006/03/29 15:04:47 jettero Exp $
+# $Id: SQLite.pm,v 1.3 2006/03/29 17:57:29 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -12,10 +12,16 @@ our $AUTOLOAD;
 
 # new {{{
 sub new {
-    my ($class, $mysql_e, $statement) = @_;
-    my $this  = bless { s=>$statement, dbo=>$mysql_e }, $class;
+    my ($class, $dbo_o, $statement) = @_;
+    my $this  = bless { s=>$statement, dbo=>$dbo_o }, $class;
 
-    $this->{sth} = $this->{dbo}->handle->prepare( $statement );
+    my $dbi = $dbo_o->handle;
+
+    undef $main::___ERR;
+
+    my $e = $SIG{__WARN__}; $SIG{__WARN__} = sub { $main::___ERR = shift };
+    $this->{sth} = $dbi->prepare( $statement );
+    $SIG{__WARN__} = $e;
 
     return $this;
 }
@@ -26,49 +32,22 @@ sub AUTOLOAD {
     my $sub  = $AUTOLOAD;
     my $wa   = wantarray;
 
-    croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
+    return undef unless $this->{sth};
+    # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
 
     $sub = $1 if $sub =~ m/::(\w+)$/;
 
-    my $tries = 2;
     if( $this->{sth}->can($sub) ) {
+        no strict 'refs';
+
         my @ret;
         my $ret;
-        my $warn;
 
-        # warn "DEBUG: FYI, $$-$this is loading $sub()";
+        if( $wa ) {
+            @ret = $this->{sth}->$sub( @_ );
 
-        EVAL_IT: eval q/ 
-            no strict 'refs';
-            local $SIG{__WARN__} = sub { $warn = "@_"; };
-
-            if( $wa ) {
-                @ret = $this->{sth}->$sub( @_ );
-
-            } else {
-                $ret = $this->{sth}->$sub( @_ );
-            }
-        /;
-         
-        if( $warn and not $@ ) {
-            $@ = $warn;
-            chomp $@;
-        }
-
-        if( $@ ) {
-            if( $@ =~ m/SQLite server has gone away/ ) {
-                if( $sub eq "execute" ) {
-                    $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
-                    $warn = undef;
-
-                    goto EVAL_IT if ((--$tries) > 0);
-
-                } else {
-                    croak "DBI::Easy::SQLite::sth can only recover during execute(), $@";
-                }
-            }
-
-            croak "ERROR executing $sub(): $@";
+        } else {
+            $ret = $this->{sth}->$sub( @_ );
         }
 
         return ($wa ? @ret : $ret);
@@ -82,10 +61,10 @@ sub AUTOLOAD {
 sub DESTROY {
     my $this = shift;
 
-    # warn "DBI::Easy::SQLite::sth is dying"; # This is here to make sure we don't normally die during global destruction.
+    # warn "DBI::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
                                         # Once it appeared to function correctly, it was removed.
                                         # Lastly, we would die during global dest iff: our circular ref from new() were not removed.
-                                        # Although, to be truely circular, the DBI::Easy::SQLite would need to point to this ::sth also
+                                        # Although, to be truely circular, the DBI::Easy::MySQL would need to point to this ::sth also
                                         # and it probably doesn't.  So, is this delete paranoid?  Yeah...  meh.
     delete $this->{dbo};
 }
@@ -115,10 +94,7 @@ sub AUTOLOAD {
 
     if( $handle->can($sub) ) {
         no strict 'refs';
-        return $handle->$sub( 
-            (ref($_[0]) eq "DBI::Easy::SQLite::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
-            @_[1 .. $#_],
-        );
+        return $handle->$sub( @_ );
 
     } else {
         croak "$sub is not a member of " . ref($handle);
@@ -130,13 +106,6 @@ sub AUTOLOAD {
 sub check_warnings {
     my $this = shift;
     my $sth  = $this->ready("show warnings");
-
-    # mysql> show warnings;
-    # +---------+------+------------------------------------------+
-    # | Level   | Code | Message                                  |
-    # +---------+------+------------------------------------------+
-    # | Warning | 1265 | Data truncated for column 'var' at row 1 |
-    # +---------+------+------------------------------------------+
 
     my @warnings;
 
@@ -174,11 +143,7 @@ sub new {
 sub do {
     my $this = shift; return unless @_;
 
-    my $e = $SIG{__WARN__}; $SIG{__WARN__} = sub {};
     my $r = $this->ready(shift)->execute(@_) or croak $this->errstr;
-
-    $SIG{__WARN__} = $e;
-
     return $r;
 }
 # }}}
@@ -223,7 +188,15 @@ sub last_insert_id {
 sub errstr {
     my $this = shift;
 
-    return $this->handle->errstr;
+    my $err = $this->handle->errstr;
+
+    if( not $err and $main::___ERR ) {
+        $main::___ERR =~ s/[\r\n]//sg;
+        $main::___ERR =~ s/ at \S+SQLite\.pm line \d+\.//;
+        $err = $main::___ERR;
+    }
+
+    return $err;
 }
 # }}}
 # trace (needs to be here, called from AUTOLOAD) {{{
@@ -351,17 +324,6 @@ DBI::Easy::SQLite - Perl extension to make your base code kinda pretty.
        $dbo->do("insert into cool set field='test3'");
        $dbo->check_warnings 
            or die "SQL WARNING: $@\twhile inserting test field\n\t";
-
-   $dbo->set_host($h); $dbo->set_port($p); 
-   $dbo->set_user($U); $dbo->set_pass($p);
-       # The first time you do a do/ready/firstcol/etc,
-       # DBI::Easy::SQLite connects to the database.  You may use these
-       # set functions to override values found in your ~/.my.cnf
-       # for user and pass.  DBI::Easy::SQLite reads _only_ the user
-       # and pass from that file.  The host name will default to
-       # "localhost" unless explicitly set.  Also, it will die on
-       # a fatal error if the user or pass is false and the
-       # ~/.my.cnf cannot be opened.
 
    my $table;
    my $sth = $dbo->bind_execute("show tables", \( $table ) );

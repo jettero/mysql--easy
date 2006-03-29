@@ -1,5 +1,5 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 15_warnings.t,v 1.3 2006/03/29 15:04:47 jettero Exp $
+# $Id: 15_warnings.t,v 1.4 2006/03/29 17:57:29 jettero Exp $
 
 use Test;
 
@@ -14,8 +14,6 @@ if( -d "/home/jettero/code/perl/easy2" ) {
     my $oki = ready $dbo("insert into testy_table set enumer ='good'");
 
     $dbo->do("create temporary table testy_table( enumer enum('good', 'ugly', 'potato', 'OMFGLMAOBBQ') )");
-
-    print STDERR "  here  \n";
 
     execute $bad or die $dbo->errstr;
     unless( check_warnings $dbo )        # example real-call: check_warnings $dbo or die $@ 
