@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.6 2006/03/29 20:25:28 jettero Exp $
+# $Id: SQLite.pm,v 1.7 2006/03/29 20:42:45 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -261,7 +261,7 @@ __END__
 
 =head1 NAME
 
-DBI::Easy::SQLite - Perl extension to make your base code kinda pretty.
+DBI::Easy::SQLite - Perl extension to handle various mundane DBI session related things, specific to sqlite.
 
 =head1 SYNOPSIS
 
