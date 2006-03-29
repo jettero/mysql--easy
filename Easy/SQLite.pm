@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.3 2006/03/29 17:57:29 jettero Exp $
+# $Id: SQLite.pm,v 1.4 2006/03/29 20:16:53 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -262,11 +262,16 @@ DBI::Easy::SQLite - Perl extension to make your base code kinda pretty.
       "msft"
   );
 
+  my $q = $dbo->ready("select * from ohlcv where symbol=?");i
   for my $s (@$symbols) {
-      my $q = $dbo->ready("select * from ohlcv where symbol=?");
       my @a;
 
-      $q->execute($s)
+      $q->execute($s) or die $dbo->errstr;
+      # SQLite prepare errors are actually croaks() that would cause your
+      # program to stop executing, for consistancy with Easy::MySQL, they
+      # are instead propagated as undefs from execute(), so errstr() will
+      # probably return a prepare error on this or die.  curious.
+
       print "@a" while @a = fetchrow_array $q;
   }
 
