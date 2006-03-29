@@ -1,9 +1,9 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 05_mysql_connect.t,v 1.1 2006/03/29 14:01:23 jettero Exp $
+# $Id: 05_mysql_connect.t,v 1.2 2006/03/29 14:06:28 jettero Exp $
 
 use Test;
 
-if( -d "/home/jettero/code/perl/easy" ) {
+if( -d "/home/jettero/code/perl/easy2" ) {
     plan tests => 5;
 } else {
      plan tests => 1;
@@ -11,7 +11,7 @@ if( -d "/home/jettero/code/perl/easy" ) {
 
 use DBI::Easy::MySQL; ok 1;
 
-if( -d "/home/jettero/code/perl/easy" ) {
+if( -d "/home/jettero/code/perl/easy2" ) {
     # no good without the tables set up...
     my $dbo = new DBI::Easy::MySQL("stocks"); $dbo->set_user("jettero");
     ok $dbo; # 2

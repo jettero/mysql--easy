@@ -1,15 +1,15 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 20_getput.t,v 1.1 2006/03/29 14:01:23 jettero Exp $
+# $Id: 20_getput.t,v 1.2 2006/03/29 14:06:28 jettero Exp $
 
 use Test;
 
-if( -d "/home/jettero/code/perl/easy" ) {
+if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;
-    use MySQL::Easy;
+    use DBI::Easy::MySQL;
 
     plan tests => 12;
 
-    my $dbo = new MySQL::Easy("scratch");
+    my $dbo = new DBI::Easy::MySQL("scratch");
 
     $dbo->do("drop table if exists easy_test");
     $dbo->do('create table easy_test( id int unsigned not null auto_increment primary key )');

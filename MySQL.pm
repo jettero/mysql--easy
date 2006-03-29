@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.1 2006/03/29 13:57:28 jettero Exp $
+# $Id: MySQL.pm,v 1.2 2006/03/29 14:07:41 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::MySQL::sth;
@@ -62,7 +62,7 @@ sub AUTOLOAD {
                     goto EVAL_IT if ((--$tries) > 0);
 
                 } else {
-                    croak "MySQL::Easy::sth can only recover during execute(), $@";
+                    croak "DBI::Easy::MySQL::sth can only recover during execute(), $@";
                 }
             }
 
@@ -80,10 +80,10 @@ sub AUTOLOAD {
 sub DESTROY {
     my $this = shift;
 
-    # warn "MySQL::Easy::sth is dying"; # This is here to make sure we don't normally die during global destruction.
+    # warn "DBI::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
                                         # Once it appeared to function correctly, it was removed.
                                         # Lastly, we would die during global dest iff: our circular ref from new() were not removed.
-                                        # Although, to be truely circular, the MySQL::Easy would need to point to this ::sth also
+                                        # Although, to be truely circular, the DBI::Easy::MySQL would need to point to this ::sth also
                                         # and it probably doesn't.  So, is this delete paranoid?  Yeah...  meh.
     delete $this->{dbo};
 }
@@ -115,7 +115,7 @@ sub AUTOLOAD {
     if( $handle->can($sub) ) {
         no strict 'refs';
         return $handle->$sub( 
-            (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
+            (ref($_[0]) eq "DBI::Easy::MySQL::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
             @_[1 .. $#_],
         );
 
@@ -200,7 +200,7 @@ sub unlock {
 sub ready {
     my $this = shift;
 
-    return new MySQL::Easy::sth( $this, @_ );
+    return new DBI::Easy::MySQL::sth( $this, @_ );
 }
 # }}}
 # firstcol {{{
@@ -252,7 +252,7 @@ sub handle {
     my $this = shift;
 
     return $this->{dbh} if defined($this->{dbh}) and $this->{dbh}->ping;
-    # warn "WARNING: MySQL::Easy is trying to reconnect (if possible)" if defined $this->{dbh};
+    # warn "WARNING: DBI::Easy::MySQL is trying to reconnect (if possible)" if defined $this->{dbh};
 
     ($this->{user}, $this->{pass}) = $this->unp unless $this->{user} and $this->{pass};
 
@@ -338,17 +338,17 @@ __END__
 
 =head1 NAME
 
-MySQL::Easy - Perl extension to make your base code kinda pretty.
+DBI::Easy::MySQL - Perl extension to make your base code kinda pretty.
 
 =head1 SYNOPSIS
 
-  use MySQL::Easy;
+  use DBI::Easy::MySQL;
 
   my $trace = 0; # the trace arg is optional
-  my $dbo = new MySQL::Easy("stocks", $trace);
+  my $dbo = new DBI::Easy::MySQL("stocks", $trace);
 
   #  This is NEW (and totally untested):
-  #  $dbo = new MySQL::Easy($existing_DBI_dbh, $trace);
+  #  $dbo = new DBI::Easy::MySQL($existing_DBI_dbh, $trace);
 
   my $symbols = $dbo->firstcol(
       qq( select symbol from ohlcv where symbol != ?),
@@ -369,9 +369,9 @@ MySQL::Easy - Perl extension to make your base code kinda pretty.
    I do like the way DBI and DBD work, but I wanted something
    _slightly_ prettier... _slightly_ handier.
 
-   Here's the functions MySQL::Easy provides:
+   Here's the functions DBI::Easy::MySQL provides:
 
-   $dbo = new MySQL::Easy( $db_name, $trace );
+   $dbo = new DBI::Easy::MySQL( $db_name, $trace );
        # $db_name is the name of the database you're connecting to...
        # If you don't pick anything, it'll pick "test" for you.
        # $trace is a 1 or false, ... it's the DBI->trace() ...
@@ -384,7 +384,7 @@ MySQL::Easy - Perl extension to make your base code kinda pretty.
        # expect.  (i.e. $dbo->do("stuff") or die $dbo->errstr);
 
    $dbo->lock("table1", "table2", "table3");
-       # MySQL::Easy uses only write locks.  Those are the ones
+       # DBI::Easy::MySQL uses only write locks.  Those are the ones
        # where nobody can read or write to the table except the
        # locking thread.  If you need a read lock, let Jet know.
        # Most probably though, if you're using this, it's a
@@ -421,9 +421,9 @@ MySQL::Easy - Perl extension to make your base code kinda pretty.
    $dbo->set_host($h); $dbo->set_port($p); 
    $dbo->set_user($U); $dbo->set_pass($p);
        # The first time you do a do/ready/firstcol/etc,
-       # MySQL::Easy connects to the database.  You may use these
+       # DBI::Easy::MySQL connects to the database.  You may use these
        # set functions to override values found in your ~/.my.cnf
-       # for user and pass.  MySQL::Easy reads _only_ the user
+       # for user and pass.  DBI::Easy::MySQL reads _only_ the user
        # and pass from that file.  The host name will default to
        # "localhost" unless explicitly set.  Also, it will die on
        # a fatal error if the user or pass is false and the
