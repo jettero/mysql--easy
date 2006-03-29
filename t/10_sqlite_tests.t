@@ -13,11 +13,11 @@ if( -f $df ) {
 plan tests => 21;
 
 my $dbo = new DBI::Easy::SQLite($df);
-my $cre = $dbo->ready("create table test( supz int )");
-my $ins = $dbo->ready("insert into test set supz=?");
-my $get = $dbo->ready("select * from test order by supz");
 
-ok( $cre->execute );
+$dbo->do("create table test( supz int )") or die $dbo->errstr; ok 1;
+
+my $ins = $dbo->ready("insert into test(supz) values(?)");
+my $get = $dbo->ready("select * from test order by supz");
 
 for ( 1 .. 10 ) {
     ok( $ins->execute( $_ ) );

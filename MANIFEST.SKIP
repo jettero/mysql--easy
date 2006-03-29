@@ -1,0 +1,8 @@
+format.scr
+distclean
+installhere
+makeitfromscratch
+.cvsignore
+CVS
+I
+testdb

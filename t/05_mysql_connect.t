@@ -1,5 +1,5 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 05_mysql_connect.t,v 1.2 2006/03/29 14:06:28 jettero Exp $
+# $Id: 05_mysql_connect.t,v 1.3 2006/03/29 15:04:47 jettero Exp $
 
 use Test;
 
@@ -19,7 +19,7 @@ if( -d "/home/jettero/code/perl/easy2" ) {
     ok $show; # 3
 
     my $h = $dbo->selectall_hashref( $show, "Tables_in_stocks" );
-    ok ref($h) eq "HASH";
+    ok( ref $h, "HASH");
 
     print STDERR " ", join(", ", keys %$h), "\n";
 

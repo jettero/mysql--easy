@@ -1,4 +1,4 @@
-# $Id: SQLite.pm,v 1.1 2006/03/29 14:27:12 jettero Exp $
+# $Id: SQLite.pm,v 1.2 2006/03/29 15:04:47 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBI::Easy::SQLite::sth;
@@ -25,6 +25,8 @@ sub AUTOLOAD {
     my $this = shift;
     my $sub  = $AUTOLOAD;
     my $wa   = wantarray;
+
+    croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
 
     $sub = $1 if $sub =~ m/::(\w+)$/;
 

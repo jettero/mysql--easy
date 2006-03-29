@@ -1,3 +1,74 @@
-0.01:  Fri Mar 17 14:22:54 EST 2006
-   - jettero got some things and some tests going
+1.33:  Thu Jul 14 08:26:49 EDT 2005
+   - jettero fixed the MANIFEST to include the new tests
+     (not that they run at all without being on my devel
+     machine).
+
+1.32:  Wed Jul 13 14:11:35 EDT 2005
+   - jettero added a test for the selectall_arrayref() ::sth
+     problem
+
+1.31:  Wed Jul 13 14:10:34 EDT 2005
+   - jettero added error checking to the Easy AUTOLOAD to
+     prevent passing the AUTOLOADing Easy version of sth to
+     DBI. It checks for SvMAGICAL and Jet can fake it
+     without doing a proper @ISA=qw(DBI::st). The
+     disadvantage of that redesign ... is a redesign.
+
+1.30:  Wed May 25 17:12:15 EDT 2005
+   - jettero created a comprehensive test to cover the new
+     stupid bugs...
+
+1.29:  Wed May 25 16:52:56 EDT 2005
+   - jettero fixed an AUTOLOAD bug in the new ::sth module.
+     Dumb.
+
+1.28:  Wed May 25 15:41:17 EDT 2005
+   - jettero fixed a couple STUPID bugs in the tests.
+
+1.27:  Wed May 25 15:17:48 EDT 2005
+   - jettero made the :sth returned by ready() a special
+     MySQL::Easy version that auto-reloads itself in the
+     case of the DBI connection fading and re-connecting.
+     This way you don't have to re-prepare the same
+     statements over and over -- by hand anyway.
+
+1.26:  Fri Feb 11 07:25:31 EST 2005
+   - jettero added a check_warnings function
+
+1.22:  Fri Oct  3 14:12:42 EDT 2003
+   - jettero made a minor change to the sub handle {} that
+     now pings the dbh to decide if it's still there.
+
+1.21:  Mon May 19 14:23:29 EDT 2003
+   - jettero added a better last_insert function
+
+1.2:  Tue Oct 29 09:13:58 EST 2002
+   - jettero added the johsr bind_execute function
+
+1.19:  Tue Oct 29 08:08:03 EST 2002
+   - jettero fixed some docs typos and added Josh's existing
+     handle support.
+
+1.18:  Thu Oct  3 09:40:15 EDT 2002
+   - jettero fixed a really stupid syntax bug ...
+
+1.17:  Fri Aug 30 07:01:19 EDT 2002
+   - jettero fixed two very stupid bugs in the AUTOLOADer
+     ... lost my webserver at 5am due to one of them. :(
+
+1.16:  Wed Aug 28 17:04:27 EDT 2002
+   - jettero made a heafty change .... and introduced that
+     AUTOLOAD ... why didn't I think of that before!?!?
+
+1.15:  Thu Jun  6 22:48:47 EDT 2002
+   - jettero did some things
+
+1.14:  Tue Jun  4 20:01:36 EDT 2002
+   - jettero fixed the test.t
+
+1.13:  Tue Jun  4 19:59:07 EDT 2002
+   - jettero made some distribution cleanups
+
+1.12:  Tue Jun  4 19:57:17 EDT 2002
+   - jettero made a couple changes ...
 
