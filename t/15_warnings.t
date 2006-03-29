@@ -1,17 +1,17 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 15_warnings.t,v 1.4 2006/03/29 17:57:29 jettero Exp $
+# $Id: 15_warnings.t,v 1.5 2006/03/29 18:03:19 jettero Exp $
 
 use Test;
+use strict;
+use DBI::Easy::MySQL;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
-    use strict;
-    use DBI::Easy::MySQL;
-
     plan tests => 2;
 
     my $dbo = new DBI::Easy::MySQL("scratch");
-    my $bad = ready $dbo("insert into testy_table set enumer ='not good!'");
-    my $oki = ready $dbo("insert into testy_table set enumer ='good'");
+
+    my $bad = $dbo->ready("insert into testy_table set enumer ='not good!'");
+    my $oki = $dbo->ready("insert into testy_table set enumer ='good'");
 
     $dbo->do("create temporary table testy_table( enumer enum('good', 'ugly', 'potato', 'OMFGLMAOBBQ') )");
 
