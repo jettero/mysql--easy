@@ -1,11 +1,7 @@
 
 
 use Test;
-plan tests => 1;
+plan tests => 2;
 
-eval {
-    use DBIx::Easy::SQLite;
-    use DBIx::Easy::MySQL;
-};
-
-ok (not $@);
+eval { use DBIx::Easy::SQLite }; ok( not $@ );
+eval { use DBIx::Easy::MySQL  }; ok( not $@ );
