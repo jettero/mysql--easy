@@ -5,7 +5,7 @@ use strict;
 
 1;
 
-our $VERSION = "1.41";
+our $VERSION = "1.40";
 
 __END__
 # Below is stub documentation for your module. You better edit it!

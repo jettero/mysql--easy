@@ -1,3 +1,6 @@
+1.41:  Thu Mar 30 07:25:45 EST 2006
+   - jettero added sqlite
+
 1.33:  Thu Jul 14 08:26:49 EDT 2005
    - jettero fixed the MANIFEST to include the new tests
      (not that they run at all without being on my devel
