@@ -12,11 +12,11 @@ __END__
 
 =head1 NAME
 
-DBI::Easy - Perl extension to make your base code kinda pretty.
+DBIx::Easy - Perl extension to make your base code kinda pretty.
 
 =head1 SYNOPSIS
 
-This is just a documentation stub and version number container.  See DBI::Easy::MySQL and DBI::Easy::SQLite for further info.
+This is just a documentation stub and version number container.  See DBIx::Easy::MySQL and DBIx::Easy::SQLite for further info.
 
 =head1 AUTHOR
 

@@ -6,13 +6,13 @@ work I had to do maintaining and working with the DBI methods to keep my
 mysql connection alive.  I found I had to do the same simple lines of code
 over and over and I didn't like it.  That is all.
 
-I did this renaming to DBI::Easy::XxXxXxX when I decided that I wanted an
+I did this renaming to DBIx::Easy::XxXxXxX when I decided that I wanted an
 similar SQLite module.
 
 Examples:
 
 my $dbh = DBI->connect("DBI::mysql:testdb:host=something:port=something;opt;opt;opt");
-my $dbo = new DBI::Easy::MySQL("testdb");  
+my $dbo = new DBIx::Easy::MySQL("testdb");  
 
 Easy reads your $ENV{HOME}/.my.cnf for unp when you don't specify the
 username/pass directly.  Handy?!?!  Yes.
