@@ -1,5 +1,5 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 05_mysql_connect.t,v 1.3 2006/03/29 15:04:47 jettero Exp $
+# $Id: 05_mysql_connect.t,v 1.4 2006/03/30 12:08:08 jettero Exp $
 
 use Test;
 
@@ -9,11 +9,11 @@ if( -d "/home/jettero/code/perl/easy2" ) {
      plan tests => 1;
 }
 
-use DBI::Easy::MySQL; ok 1;
+use DBIx::Easy::MySQL; ok 1;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     # no good without the tables set up...
-    my $dbo = new DBI::Easy::MySQL("stocks"); $dbo->set_user("jettero");
+    my $dbo = new DBIx::Easy::MySQL("stocks"); $dbo->set_user("jettero");
     ok $dbo; # 2
     my $show = $dbo->ready("show tables");
     ok $show; # 3

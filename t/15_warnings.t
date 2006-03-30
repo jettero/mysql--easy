@@ -1,14 +1,14 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 15_warnings.t,v 1.5 2006/03/29 18:03:19 jettero Exp $
+# $Id: 15_warnings.t,v 1.6 2006/03/30 12:08:08 jettero Exp $
 
 use Test;
 use strict;
-use DBI::Easy::MySQL;
+use DBIx::Easy::MySQL;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     plan tests => 2;
 
-    my $dbo = new DBI::Easy::MySQL("scratch");
+    my $dbo = new DBIx::Easy::MySQL("scratch");
 
     my $bad = $dbo->ready("insert into testy_table set enumer ='not good!'");
     my $oki = $dbo->ready("insert into testy_table set enumer ='good'");

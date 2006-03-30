@@ -1,7 +1,7 @@
-# $Id: MySQL.pm,v 1.5 2006/03/29 20:42:45 jettero Exp $
+# $Id: MySQL.pm,v 1.7 2006/03/30 12:08:08 jettero Exp $
 # vi:fdm=marker fdl=0:
 
-package DBI::Easy::MySQL::sth;
+package DBIx::Easy::MySQL::sth;
 
 use strict;
 use warnings;
@@ -65,7 +65,7 @@ sub AUTOLOAD {
                     goto EVAL_IT if ((--$tries) > 0);
 
                 } else {
-                    croak "DBI::Easy::MySQL::sth can only recover during execute(), $@";
+                    croak "DBIx::Easy::MySQL::sth can only recover during execute(), $@";
                 }
             }
 
@@ -83,16 +83,16 @@ sub AUTOLOAD {
 sub DESTROY {
     my $this = shift;
 
-    # warn "DBI::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
+    # warn "DBIx::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
                                         # Once it appeared to function correctly, it was removed.
                                         # Lastly, we would die during global dest iff: our circular ref from new() were not removed.
-                                        # Although, to be truely circular, the DBI::Easy::MySQL would need to point to this ::sth also
+                                        # Although, to be truely circular, the DBIx::Easy::MySQL would need to point to this ::sth also
                                         # and it probably doesn't.  So, is this delete paranoid?  Yeah...  meh.
     delete $this->{dbo};
 }
 # }}}
 
-package DBI::Easy::MySQL;
+package DBIx::Easy::MySQL;
 
 use strict;
 use warnings;
@@ -117,7 +117,7 @@ sub AUTOLOAD {
     if( $handle->can($sub) ) {
         no strict 'refs';
         return $handle->$sub( 
-            (ref($_[0]) eq "DBI::Easy::MySQL::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
+            (ref($_[0]) eq "DBIx::Easy::MySQL::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
             @_[1 .. $#_],
         );
 
@@ -198,7 +198,7 @@ sub unlock {
 sub ready {
     my $this = shift;
 
-    return new DBI::Easy::MySQL::sth( $this, @_ );
+    return new DBIx::Easy::MySQL::sth( $this, @_ );
 }
 # }}}
 # firstcol {{{
@@ -250,7 +250,7 @@ sub handle {
     my $this = shift;
 
     return $this->{dbh} if defined($this->{dbh}) and $this->{dbh}->ping;
-    # warn "WARNING: DBI::Easy::MySQL is trying to reconnect (if possible)" if defined $this->{dbh};
+    # warn "WARNING: DBIx::Easy::MySQL is trying to reconnect (if possible)" if defined $this->{dbh};
 
     ($this->{user}, $this->{pass}) = $this->unp unless $this->{user} and $this->{pass};
 
@@ -336,17 +336,17 @@ __END__
 
 =head1 NAME
 
-DBI::Easy::MySQL - Perl extension to handle various mundane DBI session related things, specific to mysql.
+DBIx::Easy::MySQL - Perl extension to handle various mundane DBI session related things specific to mysql.
 
 =head1 SYNOPSIS
 
-  use DBI::Easy::MySQL;
+  use DBIx::Easy::MySQL;
 
   my $trace = 0; # the trace arg is optional
-  my $dbo = new DBI::Easy::MySQL("stocks", $trace);
+  my $dbo = new DBIx::Easy::MySQL("stocks", $trace);
 
   #  This is NEW (and totally untested):
-  #  $dbo = new DBI::Easy::MySQL($existing_DBI_dbh, $trace);
+  #  $dbo = new DBIx::Easy::MySQL($existing_DBI_dbh, $trace);
 
   my $symbols = $dbo->firstcol(
       qq( select symbol from ohlcv where symbol != ?),
@@ -373,9 +373,9 @@ DBI::Easy::MySQL - Perl extension to handle various mundane DBI session related 
    I do like the way DBI and DBD work, but I wanted something
    _slightly_ prettier... _slightly_ handier.
 
-   Here's the functions DBI::Easy::MySQL provides:
+   Here's the functions DBIx::Easy::MySQL provides:
 
-   $dbo = new DBI::Easy::MySQL( $db_name, $trace );
+   $dbo = new DBIx::Easy::MySQL( $db_name, $trace );
        # $db_name is the name of the database you're connecting to...
        # If you don't pick anything, it'll pick "test" for you.
        # $trace is a 1 or false, ... it's the DBI->trace() ...
@@ -388,7 +388,7 @@ DBI::Easy::MySQL - Perl extension to handle various mundane DBI session related 
        # expect.  (i.e. $dbo->do("stuff") or die $dbo->errstr);
 
    $dbo->lock("table1", "table2", "table3");
-       # DBI::Easy::MySQL uses only write locks.  Those are the ones
+       # DBIx::Easy::MySQL uses only write locks.  Those are the ones
        # where nobody can read or write to the table except the
        # locking thread.  If you need a read lock, let Jet know.
        # Most probably though, if you're using this, it's a
@@ -425,9 +425,9 @@ DBI::Easy::MySQL - Perl extension to handle various mundane DBI session related 
    $dbo->set_host($h); $dbo->set_port($p); 
    $dbo->set_user($U); $dbo->set_pass($p);
        # The first time you do a do/ready/firstcol/etc,
-       # DBI::Easy::MySQL connects to the database.  You may use these
+       # DBIx::Easy::MySQL connects to the database.  You may use these
        # set functions to override values found in your ~/.my.cnf
-       # for user and pass.  DBI::Easy::MySQL reads _only_ the user
+       # for user and pass.  DBIx::Easy::MySQL reads _only_ the user
        # and pass from that file.  The host name will default to
        # "localhost" unless explicitly set.  Also, it will die on
        # a fatal error if the user or pass is false and the

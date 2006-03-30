@@ -3,7 +3,7 @@
 use Test;
 use strict;
 no warnings;
-use DBI::Easy::SQLite;
+use DBIx::Easy::SQLite;
 
 my $df = "./testdb";
 
@@ -13,7 +13,7 @@ if( -f $df ) {
 
 plan tests => 24;
 
-my $dbo = new DBI::Easy::SQLite($df);
+my $dbo = new DBIx::Easy::SQLite($df);
 
 eval { $dbo->do("syntax errors please!??!") }; 
 ok( $@, qr{unrecognized token} );

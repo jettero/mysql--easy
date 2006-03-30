@@ -1,16 +1,16 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 10_connection_loss.t,v 1.2 2006/03/29 14:06:28 jettero Exp $
+# $Id: 10_connection_loss.t,v 1.3 2006/03/30 12:08:08 jettero Exp $
 
 use Test;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;
-    use DBI::Easy::MySQL;
+    use DBIx::Easy::MySQL;
 
     plan tests => 5;
 
-    my $dbo1 = new DBI::Easy::MySQL("scratch"); my $dies = $dbo1->ready("select count(*) from aga");
-    my $dbo2 = new DBI::Easy::MySQL("scratch");
+    my $dbo1 = new DBIx::Easy::MySQL("scratch"); my $dies = $dbo1->ready("select count(*) from aga");
+    my $dbo2 = new DBIx::Easy::MySQL("scratch");
 
     execute $dies or die $dbo1->errstr;
     if( my ($c) = fetchrow_array $dies ) {

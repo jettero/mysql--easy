@@ -1,5 +1,5 @@
 
-package DBI::Easy;
+package DBIx::Easy;
 
 use strict;
 

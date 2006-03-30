@@ -4,8 +4,8 @@ use Test;
 plan tests => 1;
 
 eval {
-    use DBI::Easy::SQLite;
-    use DBI::Easy::MySQL;
+    use DBIx::Easy::SQLite;
+    use DBIx::Easy::MySQL;
 };
 
 ok (not $@);

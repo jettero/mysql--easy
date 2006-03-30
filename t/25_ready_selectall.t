@@ -1,15 +1,15 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 25_ready_selectall.t,v 1.2 2006/03/29 14:06:28 jettero Exp $
+# $Id: 25_ready_selectall.t,v 1.3 2006/03/30 12:08:08 jettero Exp $
 
 use Test;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;
-    use DBI::Easy::MySQL;
+    use DBIx::Easy::MySQL;
 
     plan tests => 3;
 
-    my $dbo = new DBI::Easy::MySQL("scratch");
+    my $dbo = new DBIx::Easy::MySQL("scratch");
 
     $dbo->do("drop table if exists easy_test");
     $dbo->do('create table easy_test( id int unsigned not null auto_increment primary key )');

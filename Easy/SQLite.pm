@@ -1,7 +1,7 @@
-# $Id: SQLite.pm,v 1.8 2006/03/29 20:43:45 jettero Exp $
+# $Id: SQLite.pm,v 1.9 2006/03/30 12:08:08 jettero Exp $
 # vi:fdm=marker fdl=0:
 
-package DBI::Easy::SQLite::sth;
+package DBIx::Easy::SQLite::sth;
 
 use strict;
 use warnings;
@@ -77,16 +77,16 @@ sub AUTOLOAD {
 sub DESTROY {
     my $this = shift;
 
-    # warn "DBI::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
+    # warn "DBIx::Easy::MySQL::sth is dying"; # This is here to make sure we don't normally die during global destruction.
                                         # Once it appeared to function correctly, it was removed.
                                         # Lastly, we would die during global dest iff: our circular ref from new() were not removed.
-                                        # Although, to be truely circular, the DBI::Easy::MySQL would need to point to this ::sth also
+                                        # Although, to be truely circular, the DBIx::Easy::MySQL would need to point to this ::sth also
                                         # and it probably doesn't.  So, is this delete paranoid?  Yeah...  meh.
     delete $this->{dbo};
 }
 # }}}
 
-package DBI::Easy::SQLite;
+package DBIx::Easy::SQLite;
 
 use strict;
 use warnings;
@@ -182,7 +182,7 @@ sub unlock {
 sub ready {
     my $this = shift;
 
-    return new DBI::Easy::SQLite::sth( $this, @_ );
+    return new DBIx::Easy::SQLite::sth( $this, @_ );
 }
 # }}}
 # firstcol {{{
@@ -261,17 +261,17 @@ __END__
 
 =head1 NAME
 
-DBI::Easy::SQLite - Perl extension to handle various mundane DBI session related things specific to sqlite.
+DBIx::Easy::SQLite - Perl extension to handle various mundane DBI session related things specific to sqlite.
 
 =head1 SYNOPSIS
 
-  use DBI::Easy::SQLite;
+  use DBIx::Easy::SQLite;
 
   my $trace = 0; # the trace arg is optional
-  my $dbo = new DBI::Easy::SQLite("stocks", $trace);
+  my $dbo = new DBIx::Easy::SQLite("stocks", $trace);
 
   #  This is NEW (and totally untested):
-  #  $dbo = new DBI::Easy::SQLite($existing_DBI_dbh, $trace);
+  #  $dbo = new DBIx::Easy::SQLite($existing_DBI_dbh, $trace);
 
   my $symbols = $dbo->firstcol(
       qq( select symbol from ohlcv where symbol != ?),
@@ -298,9 +298,9 @@ DBI::Easy::SQLite - Perl extension to handle various mundane DBI session related
    I do like the way DBI and DBD work, but I wanted something
    _slightly_ prettier... _slightly_ handier.
 
-   Here's the functions DBI::Easy::SQLite provides:
+   Here's the functions DBIx::Easy::SQLite provides:
 
-   $dbo = new DBI::Easy::SQLite( $db_name, $trace );
+   $dbo = new DBIx::Easy::SQLite( $db_name, $trace );
        # $db_name is the name of the database you're connecting to...
        # If you don't pick anything, it'll pick "test" for you.
        # $trace is a 1 or false, ... it's the DBI->trace() ...
@@ -313,7 +313,7 @@ DBI::Easy::SQLite - Perl extension to handle various mundane DBI session related
        # expect.  (i.e. $dbo->do("stuff") or die $dbo->errstr);
 
    $dbo->lock("table1", "table2", "table3");
-       # DBI::Easy::SQLite uses only write locks.  Those are the ones
+       # DBIx::Easy::SQLite uses only write locks.  Those are the ones
        # where nobody can read or write to the table except the
        # locking thread.  If you need a read lock, let Jet know.
        # Most probably though, if you're using this, it's a
