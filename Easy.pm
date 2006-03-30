@@ -12,7 +12,7 @@ __END__
 
 =head1 NAME
 
-DBIx::Easy - Perl extension to make your base code kinda pretty.
+DBIx::Easy - Perl extension to help with some of the mundane aspects of DBI handles.
 
 =head1 SYNOPSIS
 
