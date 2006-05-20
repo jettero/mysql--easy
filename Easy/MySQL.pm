@@ -1,4 +1,4 @@
-# $Id: MySQL.pm,v 1.7 2006/03/30 12:08:08 jettero Exp $
+# $Id: MySQL.pm,v 1.8 2006/05/20 01:27:45 jettero Exp $
 # vi:fdm=marker fdl=0:
 
 package DBIx::Easy::MySQL::sth;
@@ -175,8 +175,16 @@ sub new {
 sub do {
     my $this = shift; return unless @_;
 
-    my $r = $this->ready(shift)->execute(@_) or croak $this->errstr;
+    my $r; eval { $r = $this->ready(shift)->execute(@_) }; croak $this->errstr if $@;
     return $r;
+}
+# }}}
+# light_lock {{{
+sub light_lock {
+    my $this   = shift; return unless @_;
+    my $tolock = join(", ", map("$_ read", @_));
+
+    $this->handle->do("lock tables $tolock");
 }
 # }}}
 # lock {{{
