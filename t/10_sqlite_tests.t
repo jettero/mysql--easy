@@ -1,6 +1,18 @@
 
 
 use Test;
+
+BEGIN {
+    eval "use DBD::SQLite";
+    my $sqlite = ($@ ? 0 : 1);
+
+    if( not $sqlite ) {
+        plan tests => 1;
+        skip(1);
+        exit 0;
+    }
+}
+
 use strict;
 no warnings;
 use DBIx::Easy::SQLite;
@@ -47,5 +59,5 @@ if( $bor->execute(37) ) {
     ok(0) 
 
 } else {
-    ok( $dbo->errstr, qr(fuck!) );
+    ok( $dbo->errstr, qr(failed: near.*set.*syntax error) );
 }

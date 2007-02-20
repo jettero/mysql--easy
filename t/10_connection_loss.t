@@ -1,7 +1,18 @@
 # vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 10_connection_loss.t,v 1.3 2006/03/30 12:08:08 jettero Exp $
+# $Id: 10_connection_loss.t,v 1.4 2007/02/20 16:29:42 jettero Exp $
 
 use Test;
+
+BEGIN {
+    eval "use DBD::SQLite";
+    my $sqlite = ($@ ? 0 : 1);
+
+    if( not $sqlite ) {
+        plan tests => 1;
+        skip(1);
+        exit 0;
+    }
+}
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;

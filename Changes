@@ -1,3 +1,7 @@
+1.42:  Tue Feb 20 11:29:41 EST 2007
+   - jettero made this still test ok even if you don't have
+     DBD::SQLite
+
 1.41:  Fri May 19 21:27:43 EDT 2006
    - jettero added light_lock
 
