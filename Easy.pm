@@ -102,6 +102,7 @@ use AutoLoader;
 use DBI;
 
 our $AUTOLOAD;
+our $VERSION = "2.0.0";
 
 1;
 
