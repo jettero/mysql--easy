@@ -9,11 +9,11 @@ if( -d "/home/jettero/code/perl/easy2" ) {
      plan tests => 1;
 }
 
-use DBIx::Easy::MySQL; ok 1;
+use MySQL::Easy; ok 1;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     # no good without the tables set up...
-    my $dbo = new DBIx::Easy::MySQL("stocks"); $dbo->set_user("jettero");
+    my $dbo = new MySQL::Easy("stocks"); $dbo->set_user("jettero");
     ok $dbo; # 2
     my $show = $dbo->ready("show tables");
     ok $show; # 3

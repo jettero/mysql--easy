@@ -3,25 +3,14 @@
 
 use Test;
 
-BEGIN {
-    eval "use DBD::SQLite";
-    my $sqlite = ($@ ? 0 : 1);
-
-    if( not $sqlite ) {
-        plan tests => 1;
-        skip(1);
-        exit 0;
-    }
-}
-
 if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;
-    use DBIx::Easy::MySQL;
+    use MySQL::Easy;
 
     plan tests => 5;
 
-    my $dbo1 = new DBIx::Easy::MySQL("scratch"); my $dies = $dbo1->ready("select count(*) from aga");
-    my $dbo2 = new DBIx::Easy::MySQL("scratch");
+    my $dbo1 = new MySQL::Easy("scratch"); my $dies = $dbo1->ready("select count(*) from aga");
+    my $dbo2 = new MySQL::Easy("scratch");
 
     execute $dies or die $dbo1->errstr;
     if( my ($c) = fetchrow_array $dies ) {

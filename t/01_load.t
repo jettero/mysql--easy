@@ -1,9 +1,5 @@
 
-eval "use DBD::SQLite";
-my $sqlite = ($@ ? 0 : 1);
-
 use Test;
-plan tests => 2;
+plan tests => 1;
 
-if( $sqlite ) { eval { use DBIx::Easy::SQLite }; ok( not $@ ); } else { skip(1) }
-eval { use DBIx::Easy::MySQL  }; ok( not $@ );
+eval { use MySQL::Easy  }; ok( not $@ );

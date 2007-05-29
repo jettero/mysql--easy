@@ -3,12 +3,12 @@
 
 use Test;
 use strict;
-use DBIx::Easy::MySQL;
+use MySQL::Easy;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     plan tests => 2;
 
-    my $dbo = new DBIx::Easy::MySQL("scratch");
+    my $dbo = new MySQL::Easy("scratch");
 
     my $bad = $dbo->ready("insert into testy_table set enumer ='not good!'");
     my $oki = $dbo->ready("insert into testy_table set enumer ='good'");

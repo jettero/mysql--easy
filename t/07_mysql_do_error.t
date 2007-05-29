@@ -10,10 +10,10 @@ if( -d "/home/jettero/code/perl/easy2" ) {
     plan tests => 1;
 }
 
-use DBIx::Easy::MySQL; ok 1;
+use MySQL::Easy; ok 1;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
-    my $dbo = new DBIx::Easy::MySQL("scratch");
+    my $dbo = new MySQL::Easy("scratch");
 
     eval { $dbo->do("syntax error!!") };
     ok( $@, qr(error in your SQL syntax) );

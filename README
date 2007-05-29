@@ -6,13 +6,10 @@ work I had to do maintaining and working with the DBI methods to keep my
 mysql connection alive.  I found I had to do the same simple lines of code
 over and over and I didn't like it.  That is all.
 
-I did this renaming to DBIx::Easy::XxXxXxX when I decided that I wanted an
-similar SQLite module.
-
 Examples:
 
 my $dbh = DBI->connect("DBI::mysql:testdb:host=something:port=something;opt;opt;opt");
-my $dbo = new DBIx::Easy::MySQL("testdb");  
+my $dbo = new MySQL::Easy("testdb");
 
 Easy reads your $ENV{HOME}/.my.cnf for unp when you don't specify the
 username/pass directly.  Handy?!?!  Yes.
@@ -27,8 +24,5 @@ and re-prepare the sth automatically -- ie, no errors.
 Other than these two little things, this package is probably not necessary.
 However I'm aware of literally dozens that use it -- including myself -- so
 I continue to maintain it.
-
-The new SQLite variety handles various runtime errors (croaks) by turning them
-into error events that you can interact with without needing eval {}.
 
 - Paul

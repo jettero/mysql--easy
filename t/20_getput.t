@@ -5,11 +5,11 @@ use Test;
 
 if( -d "/home/jettero/code/perl/easy2" ) {
     use strict;
-    use DBIx::Easy::MySQL;
+    use MySQL::Easy;
 
     plan tests => 12;
 
-    my $dbo = new DBIx::Easy::MySQL("scratch");
+    my $dbo = new MySQL::Easy("scratch");
 
     $dbo->do("drop table if exists easy_test");
     $dbo->do('create table easy_test( id int unsigned not null auto_increment primary key )');
