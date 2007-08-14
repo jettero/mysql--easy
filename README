@@ -21,8 +21,7 @@ $sth1 looks pretty much the same as $sth2... but $sth2 will check to see if
 the connection is still there and if it isn't, will rebuild the connection
 and re-prepare the sth automatically -- ie, no errors.
 
-Other than these two little things, this package is probably not necessary.
-However I'm aware of literally dozens that use it -- including myself -- so
-I continue to maintain it.
+Other than these two little things, this package is probably not necessary and
+sticking with vanilla DBI is probably the way to go.
 
 - Paul
