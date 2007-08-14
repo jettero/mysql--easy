@@ -3,6 +3,8 @@
      It's a terrible name, but the whole package is very mysql specific and the
      DBIx::Easy::MySQL namespace did not work out well at all.
 
+   - I also stripped out the sqlite portions.  There was nothing to make easy about using it.
+
 1.42:  Tue Feb 20 11:29:41 EST 2007
    - jettero made this still test ok even if you don't have
      DBD::SQLite
