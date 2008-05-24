@@ -102,7 +102,9 @@ use AutoLoader;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.0.1";
+
+use version;
+our $VERSION = version->new("2.0.1")->numify;
 
 1;
 
