@@ -104,7 +104,7 @@ use DBI;
 our $AUTOLOAD;
 
 use version;
-our $VERSION = version->new("2.0.1")->numify;
+our $VERSION = qv("2.0.2");
 
 1;
 
