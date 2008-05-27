@@ -103,8 +103,7 @@ use DBI;
 
 our $AUTOLOAD;
 
-use version;
-our $VERSION = qv("2.0.2");
+use version; our $VERSION = qv("2.0.3");
 
 1;
 
