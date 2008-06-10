@@ -231,7 +231,8 @@ sub last_insert_id {
     my $this = shift;
 
     # return $this->firstcol("select last_insert_id()")->[0];
-    return $this->handle->{mysql_insertid};
+    # return $this->handle->{mysql_insertid};
+    return $this->handle->last_insert_id(undef,undef,undef,undef);
 }
 # }}}
 # errstr (needs to be here, called from AUTOLOAD) {{{
