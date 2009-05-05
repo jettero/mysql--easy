@@ -1,2 +1,4 @@
-testdb
 ^.git
+MANIFEST.SKIP
+^.pm-desc.html
+testdb
