@@ -1,5 +1,7 @@
 
+use strict;
 use Test;
+
 plan tests => 1;
 
-eval { use MySQL::Easy  }; ok( not $@ );
+ok( eval "use MySQL::Easy; 1" );

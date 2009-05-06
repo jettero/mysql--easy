@@ -1,11 +1,10 @@
-# vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 15_warnings.t,v 1.6 2006/03/30 12:08:08 jettero Exp $
 
-use Test;
 use strict;
+use Test;
 use MySQL::Easy;
+use Cwd;
 
-if( -d "/home/jettero/code/perl/easy2" ) {
+if( getcwd() eq "/home/jettero/code/perl/easy" ) {
     plan tests => 2;
 
     my $dbo = new MySQL::Easy("scratch");

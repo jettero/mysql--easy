@@ -1,9 +1,9 @@
-# vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 10_connection_loss.t,v 1.4 2007/02/20 16:29:42 jettero Exp $
 
+use strict;
 use Test;
+use Cwd;
 
-if( -d "/home/jettero/code/perl/easy2" ) {
+if( getcwd() eq "/home/jettero/code/perl/easy" ) {
     use strict;
     use MySQL::Easy;
 

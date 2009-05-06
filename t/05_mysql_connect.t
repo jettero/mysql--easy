@@ -1,17 +1,18 @@
-# vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 05_mysql_connect.t,v 1.4 2006/03/30 12:08:08 jettero Exp $
 
+use strict;
 use Test;
+use Cwd;
 
-if( -d "/home/jettero/code/perl/easy2" ) {
+if( getcwd() eq "/home/jettero/code/perl/easy" ) {
     plan tests => 5;
+
 } else {
      plan tests => 1;
 }
 
 use MySQL::Easy; ok 1;
 
-if( -d "/home/jettero/code/perl/easy2" ) {
+if( getcwd() eq "/home/jettero/code/perl/easy" ) {
     # no good without the tables set up...
     my $dbo = new MySQL::Easy("stocks"); $dbo->set_user("jettero");
     ok $dbo; # 2

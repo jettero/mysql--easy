@@ -1,9 +1,9 @@
-# vi:fdm=marker fdl=0 syntax=perl:
-# $Id: 25_ready_selectall.t,v 1.3 2006/03/30 12:08:08 jettero Exp $
 
+use strict;
 use Test;
+use Cwd;
 
-if( -d "/home/jettero/code/perl/easy2" ) {
+if( getcwd() eq "/home/jettero/code/perl/easy" ) {
     use strict;
     use MySQL::Easy;
 
