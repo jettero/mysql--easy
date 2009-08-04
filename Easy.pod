@@ -15,7 +15,7 @@ MySQL::Easy - Perl extension to handle various mundane DBI session related thing
   for my $s (@$symbols) {
       my @a;
 
-      $q->execute($s) or die $dbo->errstr;
+      $q->execute($s);
       # Although the regular DBI will reconnect to the server when it loses
       # it's connection, any queries you had previously prepared will fail
       # until it reconnects.  easy::mysql handles all that for you so this
@@ -51,7 +51,7 @@ This immediately executes the SQL with the bind vars given.  You can pas in a
 statement handle instead of the string... this is faster if you're going to use
 the SQL over and over.  Returns a bool like you'd expect.  Example:
 
-    $dbo->do("stuff") or die $dbo->errstr;
+    $dbo->do("stuff");
 
 =item B<lock>
 
