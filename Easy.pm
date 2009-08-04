@@ -98,7 +98,7 @@ use warnings;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1001";
+our $VERSION = "2.1002";
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
