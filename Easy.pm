@@ -36,7 +36,7 @@ sub AUTOLOAD {
 
         # warn "DEBUG: FYI, $$-$this is loading $sub()";
 
-        EVAL_IT: eval q/ 
+        EVAL_IT: eval q {
             no strict 'refs';
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
@@ -46,8 +46,8 @@ sub AUTOLOAD {
             } else {
                 $ret = $this->{sth}->$sub( @_ );
             }
-        /;
-         
+        };
+
         if( $warn and not $@ ) {
             $@ = $warn;
             chomp $@;
@@ -111,7 +111,7 @@ sub AUTOLOAD {
 
     if( $handle->can($sub) ) {
         no strict 'refs';
-        return $handle->$sub( 
+        return $handle->$sub(
             (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
             @_[1 .. $#_],
         );
@@ -152,7 +152,7 @@ sub check_warnings {
 }
 # }}}
 # new {{{
-sub new { 
+sub new {
     my $this  = shift;
 
     $this = bless {}, $this;
@@ -264,8 +264,8 @@ sub handle {
     $this->{trace} =           0 unless $this->{trace};
 
     $this->{dbh} =
-    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1", 
-        $this->{user}, $this->{pass});
+    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1",
+        $this->{user}, $this->{pass}, { RaiseError => 1, AutoCommit => 0 });
 
     croak "failed to generate connection: " . DBI->errstr unless $this->{dbh};
 
@@ -297,27 +297,27 @@ sub unp {
 }
 # }}}
 # set_host set_user set_pass {{{
-sub set_host { 
+sub set_host {
     my $this = shift;
 
     $this->{host} = shift;
 }
 
-sub set_port { 
+sub set_port {
     my $this = shift;
 
     $this->{port} = shift;
 }
 
-sub set_user { 
+sub set_user {
     my $this = shift;
-    
+
     $this->{user} = shift;
 }
 
-sub set_pass { 
+sub set_pass {
     my $this = shift;
-    
+
     $this->{pass} = shift;
 }
 # }}}
