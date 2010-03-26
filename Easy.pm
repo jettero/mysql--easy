@@ -23,7 +23,7 @@ sub AUTOLOAD {
     my $sub  = $AUTOLOAD;
     my $wa   = wantarray;
 
-    return undef unless $this->{sth};
+    return unless $this->{sth};
     # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
 
     $sub = $1 if $sub =~ m/::(\w+)$/;
@@ -98,7 +98,7 @@ use warnings;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1002";
+our $VERSION = "2.1003";
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
@@ -328,8 +328,8 @@ sub bind_execute {
 
     my $sth = $this->ready($sql);
 
-    $sth->execute            or return undef;
-    $sth->bind_columns( @_ ) or return undef;
+    $sth->execute            or return;
+    $sth->bind_columns( @_ ) or return;
 
     return $sth;
 }
