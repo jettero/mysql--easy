@@ -17,6 +17,16 @@ sub new {
     return $this;
 }
 # }}}
+# bind_execute {{{
+sub bind_execute {
+    my $this = shift;
+
+    $this->{sth}->execute;
+    $this->{sth}->bind_columns( @_ );
+
+    return $this;
+}
+# }}}
 # AUTOLOAD {{{
 sub AUTOLOAD {
     my $this = shift;
