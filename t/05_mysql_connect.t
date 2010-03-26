@@ -3,7 +3,7 @@ use strict;
 use Test;
 use Cwd;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     plan tests => 5;
 
 } else {
@@ -12,7 +12,7 @@ if( getcwd() eq "/home/jettero/code/perl/easy" ) {
 
 use MySQL::Easy; ok 1;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     # no good without the tables set up...
     my $dbo = new MySQL::Easy("stocks"); $dbo->set_user("jettero");
     ok $dbo; # 2

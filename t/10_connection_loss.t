@@ -3,7 +3,7 @@ use strict;
 use Test;
 use Cwd;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     use strict;
     use MySQL::Easy;
 

@@ -3,7 +3,7 @@ use strict;
 use Test;
 use Cwd;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     plan tests => 2;
 
 } else {
@@ -12,7 +12,7 @@ if( getcwd() eq "/home/jettero/code/perl/easy" ) {
 
 use MySQL::Easy; ok 1;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     my $dbo = new MySQL::Easy("scratch");
 
     eval { $dbo->do("syntax error!!") };

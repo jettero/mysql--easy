@@ -4,7 +4,7 @@ use Test;
 use MySQL::Easy;
 use Cwd;
 
-if( getcwd() eq "/home/jettero/code/perl/easy" ) {
+if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     plan tests => 2;
 
     my $dbo = new MySQL::Easy("scratch");
