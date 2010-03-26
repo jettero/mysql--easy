@@ -264,7 +264,7 @@ sub handle {
     $this->{trace} =           0 unless $this->{trace};
 
     $this->{dbh} =
-    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1",
+    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1;mysql_enable_utf8=1",
         $this->{user}, $this->{pass}, { RaiseError => 1, AutoCommit => 0 });
 
     croak "failed to generate connection: " . DBI->errstr unless $this->{dbh};
