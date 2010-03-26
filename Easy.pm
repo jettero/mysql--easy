@@ -46,7 +46,7 @@ sub AUTOLOAD {
 
         # warn "DEBUG: FYI, $$-$this is loading $sub()";
 
-        EVAL_IT: eval q {
+        EVAL_IT: eval {
             no strict 'refs';
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
@@ -272,6 +272,10 @@ sub handle {
     $this->{port}  =      "3306" unless $this->{port};
     $this->{dbase} =      "test" unless $this->{dbase};
     $this->{trace} =           0 unless $this->{trace};
+
+    $this->{dbh}->disconnect if $this->{dbh}; # curiously, sometimes we do have a handle, but the ping doesn't work
+                                              # if we replace the handle, DBI complains about not disconnecting.
+                                              # Heh.  It's gone dude, let it go.
 
     $this->{dbh} =
     DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1;mysql_enable_utf8=1",
