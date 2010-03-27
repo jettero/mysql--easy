@@ -1,3 +1,6 @@
+2.1003: Fri Mar 26 2010
+   - got utf8 working
+
 2.1002: Tue Aug 04 2009
    - make sure autoraise is explicit
    - remove or die $dbo->errstr from docs

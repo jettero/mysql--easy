@@ -278,8 +278,17 @@ sub handle {
                                               # Heh.  It's gone dude, let it go.
 
     $this->{dbh} =
-    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}:mysql_compression=1;mysql_auto_reconnect=1;mysql_enable_utf8=1",
-        $this->{user}, $this->{pass}, { RaiseError => 1, AutoCommit => 0 });
+    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}",
+        $this->{user}, $this->{pass}, {
+
+            RaiseError => 1, AutoCommit => 0,
+
+            mysql_enable_utf8    => 1,
+            mysql_compression    => 1,
+            mysql_ssl            => 1,
+            mysql_auto_reconnect => 1,
+
+        });
 
     croak "failed to generate connection: " . DBI->errstr unless $this->{dbh};
 
