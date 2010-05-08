@@ -43,6 +43,14 @@ C<$db_name> is the name of the database you're connecting to...  If you don't
 pick anything, it'll pick "test" for you.  C<$trace> is a 1 or false, ... it's
 the L<< DBI->trace()|DBI/trace >> ...
 
+    $dbo = MySQL::Easy->new( $db_name, {user=>"blarg", host=>"whatever"})
+
+Alternatively, you can pass a hashref of options in place of the trace argument.
+Passing C<< user=>"blarg" >> in this way is the same as calling
+C<< $dbo->set_user() >> -- so this is really only good for avoiding calls to
+C<set_user>, C<set_pass>, and C<set_host>; although, C<trace> also works as an
+attribute here by calling the function of the same name.
+
 =item B<do>
 
     $dbo->do("sql statement bind=? bind=?", $bind1, $bind2);
@@ -82,6 +90,13 @@ this (although the database handle does).
    $arr = $dbo->firstcol("select col from tab where x=? and y=?", $x, $y)
 
 returns an arrayref of values for the sql.
+
+=item B<firstval>
+
+   $val = $dbo->firstval("select blarg from table where unique_id=?", $id);
+
+Returns the value asked for or C<undef> (as a scalar) if the query didn't work
+out.
 
 =item B<last_insert_id>
 

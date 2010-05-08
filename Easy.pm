@@ -108,7 +108,7 @@ use warnings;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1003";
+our $VERSION = "2.1005";
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
@@ -163,15 +163,34 @@ sub check_warnings {
 # }}}
 # new {{{
 sub new {
-    my $this  = shift;
+    my $this = shift;
 
     $this = bless {}, $this;
 
     $this->{dbase} = shift; croak "dbase = '$this->{dbase}'?" unless $this->{dbase};
     $this->{dbh} = $this->{dbase} if ref($this->{dbase}) eq "DBI::db";
-    $this->{trace} = shift;
 
-    $this->{dbh}->trace( $this->{trace} ) if $this->{dbh};
+    if( $this->{dbh} ) {
+        my $args = shift;
+        if( ref $args ) {
+            for my $k (keys %$args) {
+                my $f;
+
+                if( $this->can($f = "set_$k") ) {
+                    $this->$f($args->{$k});
+
+                } elsif( $k eq "trace" ) {
+                    $this->trace($args->{trace});
+
+                } else {
+                    croak "unrecognized attribute: $k"
+                }
+            }
+
+        } else {
+            $this->trace($args);
+        }
+    }
 
     return $this;
 }
@@ -220,6 +239,15 @@ sub firstcol {
     my $query = shift;
 
     return $this->handle->selectcol_arrayref($query, undef, @_);
+}
+# }}}
+# firstval {{{
+sub firstcol {
+    my $this = shift;
+    my $query = shift;
+    my $ar = $this->handle->selectcol_arrayref($query, undef, @_);
+    return undef unless ref $ar;
+    return $ar->[0];
 }
 # }}}
 # thread_id {{{
@@ -281,7 +309,10 @@ sub handle {
     DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}",
         $this->{user}, $this->{pass}, {
 
-            RaiseError => 1, AutoCommit => 0,
+            RaiseError => ($this->{raise} ? 1:0),
+            PrintError => ($this->{raise} ? 0:1),
+
+            AutoCommit => 0,
 
             mysql_enable_utf8    => 1,
             mysql_compression    => 1,
@@ -342,6 +373,12 @@ sub set_pass {
     my $this = shift;
 
     $this->{pass} = shift;
+}
+
+sub set_raise {
+    my $this = shift;
+
+    $this->{raise} = shift;
 }
 # }}}
 # bind_execute {{{
