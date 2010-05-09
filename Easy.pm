@@ -2,8 +2,7 @@
 package MySQL::Easy::sth;
 
 use Carp;
-use strict;
-use warnings;
+use common::sense;
 
 our $AUTOLOAD;
 
@@ -102,8 +101,7 @@ sub DESTROY {
 package MySQL::Easy;
 
 use Carp;
-use strict;
-use warnings;
+use common::sense;
 
 use DBI;
 
@@ -395,4 +393,4 @@ sub bind_execute {
 }
 # }}}
 
-"true";
+1;
