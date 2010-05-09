@@ -242,7 +242,7 @@ sub firstcol {
 }
 # }}}
 # firstval {{{
-sub firstcol {
+sub firstval {
     my $this = shift;
     my $query = shift;
     my $ar = $this->handle->selectcol_arrayref($query, undef, @_);
