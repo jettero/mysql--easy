@@ -108,7 +108,7 @@ use warnings;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1003";
+our $VERSION = "2.1005";
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
@@ -239,6 +239,15 @@ sub firstcol {
     my $query = shift;
 
     return $this->handle->selectcol_arrayref($query, undef, @_);
+}
+# }}}
+# firstval {{{
+sub firstcol {
+    my $this = shift;
+    my $query = shift;
+    my $ar = $this->handle->selectcol_arrayref($query, undef, @_);
+    return undef unless ref $ar;
+    return $ar->[0];
 }
 # }}}
 # thread_id {{{

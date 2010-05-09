@@ -83,6 +83,13 @@ this (although the database handle does).
 
 returns an arrayref of values for the sql.
 
+=item B<firstval>
+
+   $val = $dbo->firstval("select blarg from table where unique_id=?", $id);
+
+Returns the value asked for or C<undef> (as a scalar) if the query didn't work
+out.
+
 =item B<last_insert_id>
 
    $id = $dbo->last_insert_id;
