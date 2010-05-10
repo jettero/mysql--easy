@@ -1,4 +1,4 @@
-2.1005: Mon May 10 2010
+2.1006: Mon May 10 2010
    - I made various improvements to the API, nothing worth
      mentioning.  Just little things to the new() call -- see the
      POD.  Hrm, $dbo->firstval() is worth noting -- see the POD.
