@@ -1,3 +1,8 @@
+2.1005: Mon May 10 2010
+   - I made various improvements to the API, nothing worth
+     mentioning.  Just little things to the new() call -- see the
+     POD.  Hrm, $dbo->firstval() is worth noting -- see the POD.
+
 2.1003: Fri Mar 26 2010
    - got utf8 working
 
