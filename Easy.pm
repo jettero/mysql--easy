@@ -106,7 +106,7 @@ use common::sense;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1006";
+our $VERSION = "2.1007";
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
@@ -169,6 +169,10 @@ sub new {
     $this->{dbh} = $this->{dbase} if ref($this->{dbase}) eq "DBI::db";
 
     my $args = shift;
+    my $tr   = ref($args) ? delete $args->{trace} : $args;
+
+    $this->trace($tr) if $tr and $this->{dbh};
+
     if( ref $args ) {
         for my $k (keys %$args) {
             my $f;
@@ -176,16 +180,10 @@ sub new {
             if( $this->can($f = "set_$k") ) {
                 $this->$f($args->{$k});
 
-            } elsif( $k eq "trace" ) {
-                $this->trace($args->{trace});
-
             } else {
                 croak "unrecognized attribute: $k"
             }
         }
-
-    } else {
-        $this->trace($args);
     }
 
     return $this;

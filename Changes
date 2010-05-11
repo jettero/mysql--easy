@@ -1,3 +1,6 @@
+2.1007: Tue May 11 2010
+   - more introduced bugs
+
 2.1006: Mon May 10 2010
    - I made various improvements to the API, nothing worth
      mentioning.  Just little things to the new() call -- see the
