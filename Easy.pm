@@ -106,7 +106,14 @@ use common::sense;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1007";
+our $VERSION = "2.1008";
+our $CNF_ENV = "ME_CNF";
+our $USER_ENV = "ME_USER";
+our $PASS_ENV = "ME_PASS";
+our $HOME_ENV = "HOME";
+our @MY_CNF_LOCATIONS = (
+    $ENV{$CNF_ENV}, "$ENV{$HOME_ENV}/.my.cnf", "/etc/mysql-easy.cnf", "/etc/mysql/my.cnf"
+);
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
@@ -326,22 +333,24 @@ sub handle {
 sub unp {
     my $this = shift;
 
-    my ($user, $pass);
-    my $mycnf = "$ENV{HOME}/.my.cnf";
+    return ($ENV{$USER_ENV}, $ENV{$PASS_ENV}) if $ENV{$USER_ENV} and $ENV{$PASS_ENV};
 
-    open PASS, $mycnf or die "erorr reading $mycnf to find (otherwise unspecified) username and password: $!";
+    my ($user, $pass, $file, $fh);
 
-    my $l;
-    while($l = <PASS>) {
-        $user = $1 if $l =~ m/user\s*=\s*(.+)/;
-        $pass = $1 if $l =~ m/password\s*=\s*(.+)/;
+    for $file (@MY_CNF_LOCATIONS) {
+        next unless -f $file;
+        next unless open $fh, $file;
 
-        last if($user and $pass);
+        while(<$fh>) {
+            $user = $1 if m/user\s*=\s*(.+)/;
+            $pass = $1 if m/password\s*=\s*(.+)/;
+
+            return ($user, $pass) if $user and $pass;
+        }
     }
 
-    close PASS;
-
-    return ($user, $pass);
+    die "unable to locate a username and password\n";
+    return;
 }
 # }}}
 # set_host set_user set_pass {{{

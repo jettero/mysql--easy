@@ -133,7 +133,8 @@ I'll just give this example:
 
 The first time you do a L</do>/L</ready>/L</firstcol>/etc, L<MySQL::Easy>
 connects to the database.  You may use these set functions to override values
-found in your C<~/.my.cnf> for user and pass.  
+found in your C<~/.my.cnf> for user and pass.  They can also be passed during
+the call to L<new>.
 
 L<MySQL::Easy> reads the user and pass from that file.  The host name will
 default to I<localhost> unless explicitly set.
@@ -156,6 +157,44 @@ This was Josh's idea (see L</THANKS>).
 =head1 B<AUTOLOAD>
 
 Any functions from L<DBI> will work with the C<$dbo>.
+
+=head1 B<AUTHENTICATION>
+
+L<MySQL::Easy> actually checks a few places for the username and password
+(largely so it needn't be included in your script).  These alternate locations
+are checked in the following order until something is found.
+
+=over
+
+=item B<$ENV{ME_USER}> and B<$ENV{ME_PASS}>
+
+Then environment variables C<ME_USER> and C<ME_PASS> override any file based
+guesses.  This only works if both are set.
+
+=item B<$ENV{ME_CNF}>
+
+Then environment variable C<ME_CNF> may contain the location of a file.  If it
+does, it's checked for username and password info.  If only one is found, the
+value falls through to the next file.
+
+=item B<$ENV{HOME}/.my.cnf>
+
+If the file exists, C<~yourname/.my.cnf> is checked for username and password
+info.  If only one is found, the value falls through to the next file.
+
+=item B</etc/mysql-easy.cnf>
+
+If the file exists, it is checked for username and password info.  If only one
+is found, the value falls through to the next file.
+
+=item B</etc/mysql/my.cnf>
+
+If the file exists, it is checked for username and password info.
+
+=back
+
+The environment variable I<names> and file locations are also all configurable
+(use the source for further information).
 
 =head1 AUTHOR
 
