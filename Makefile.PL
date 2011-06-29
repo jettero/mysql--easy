@@ -10,7 +10,7 @@ WriteMakefile(
         (MIN_PERL_VERSION => 5.006001,
             META_MERGE => {
                 keywords => ['mysql', 'helper', 'easy'],
-              # resources=> { repository => 'http://github.com/jettero/mysql--easy' },
+                resources=> { repository => 'http://github.com/jettero/mysql--easy' },
             },
 
         LICENSE	=> 'LGPL',
