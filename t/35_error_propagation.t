@@ -26,8 +26,6 @@ ok( 0+@a, 2 );
 
 $x = eval { $dbo->selectall_hashref($sql, "a") }; $exec_line = __LINE__;
 
-warn "\n\n>>>$@<<\n\n";
-
 ok( $x, undef );
 ok( $@, qr(at $f line $exec_line) );
 

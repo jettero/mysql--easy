@@ -30,7 +30,6 @@ sub bind_execute {
 sub AUTOLOAD {
     my $this = shift;
     my $sub  = $AUTOLOAD;
-    my $wa   = wantarray;
 
     return unless $this->{sth};
     # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
@@ -39,9 +38,8 @@ sub AUTOLOAD {
 
     my $tries = 2;
     if( $this->{sth}->can($sub) ) {
-        my @ret;
-        my $ret;
-        my $warn;
+        my $wa = wantarray;
+        my ($err, $warn, $ret, @ret);
 
         # warn "DEBUG: FYI, $$-$this is loading $sub()";
 
@@ -57,7 +55,7 @@ sub AUTOLOAD {
             }
         };
 
-        my $err = $@;
+        $err = $@;
 
         if( $warn and not $err ) {
             $err = $warn;
@@ -136,28 +134,43 @@ sub AUTOLOAD {
     my $handle = $this->handle;
 
     if( $handle->can($sub) ) {
-        no strict 'refs';
-        if( wantarray ) {
-            my @ret = eval { $handle->$sub(
+        my $wa = wantarray;
+        my ($err, $warn, $ret, @ret);
+
+        EVAL_IT: eval {
+            no strict 'refs';
+            local $SIG{__WARN__} = sub { $warn = "@_"; };
+
+            if( wantarray ) {
+                @ret = $handle->$sub(
                     (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
                     @_[1 .. $#_],
                 );
-            };
-
-            croak $@ if $@;
-
-            return @ret;
-        } else {
-            my $ret = eval { $handle->$sub(
+            } else {
+                $ret = $handle->$sub(
                     (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
                     @_[1 .. $#_],
                 );
-            };
+            }
+        };
 
-            croak $@ if $@;
+        $err = $@;
 
-            return $ret;
+        if( $warn and not $err ) {
+            $err = $warn;
+            chomp $err;
         }
+
+        if( $err ) {
+            1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
+
+            # DBD::mysql::db selectall_hashref failed: You have an error in your SQL syntax; check the manual that corresponds to your MySQL serve
+            $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
+
+            croak "ERROR executing $sub(): $err";
+        }
+
+        return ($wa ? @ret : $ret);
 
     } else {
         croak "$sub is not a member of " . ref($handle);
