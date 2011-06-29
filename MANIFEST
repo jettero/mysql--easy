@@ -1,8 +1,8 @@
 Changes
 Easy.pm
 Easy.pod
-MANIFEST
 Makefile.PL
+MANIFEST
 README
 t/01_load.t
 t/05_mysql_connect.t
@@ -12,3 +12,4 @@ t/15_warnings.t
 t/20_getput.t
 t/25_ready_selectall.t
 t/30_utf8.t
+t/35_error_propagation.t
