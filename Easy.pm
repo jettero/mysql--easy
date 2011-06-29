@@ -231,7 +231,10 @@ sub unlock {
 sub ready {
     my $this = shift;
 
-    return new MySQL::Easy::sth( $this, @_ );
+    my $sth = MySQL::Easy::sth->new( $this, @_ );
+       $sth->{_ready_caller} = [ caller ];
+
+    return $sth;
 }
 # }}}
 # firstcol {{{
