@@ -3,6 +3,7 @@
 use strict;
 use MySQL::Easy;
 use Test;
+use Cwd;
 
 if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     my $f = __FILE__;
