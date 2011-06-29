@@ -57,13 +57,24 @@ sub AUTOLOAD {
             }
         };
 
-        if( $warn and not $@ ) {
-            $@ = $warn;
-            chomp $@;
+        my $err = $@;
+
+        if( $warn and not $err ) {
+            $err = $warn;
+            chomp $err;
         }
 
-        if( $@ ) {
-            if( $@ =~ m/MySQL server has gone away/ ) {
+        if( $err ) {
+          # my @c = caller;
+          # my $p = "at $c[1] line $c[2], prepared at $this->{_ready_caller}[1] line $this->{_ready_caller}[2]\n";
+            my $p = "(prepared at $this->{_ready_caller}[1] line $this->{_ready_caller}[2])";
+
+            1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
+
+            # ERROR executing execute(): DBD::mysql::st execute failed: You have an error in your SQL syntax; check the manual
+            $err =~ s/DBD::mysql::sth? execute failed:\s*//;
+
+            if( $err =~ m/MySQL server has gone away/ ) {
                 if( $sub eq "execute" ) {
                     $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
                     $warn = undef;
@@ -71,11 +82,11 @@ sub AUTOLOAD {
                     goto EVAL_IT if ((--$tries) > 0);
 
                 } else {
-                    croak "MySQL::Easy::sth can only recover during execute(), $@";
+                    croak "MySQL::Easy::sth can only recover from connection problems during execute(): $err $p";
                 }
             }
 
-            croak "ERROR executing $sub(): $@";
+            croak "ERROR executing $sub(): $err $p";
         }
 
         return ($wa ? @ret : $ret);
@@ -126,10 +137,27 @@ sub AUTOLOAD {
 
     if( $handle->can($sub) ) {
         no strict 'refs';
-        return $handle->$sub(
-            (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
-            @_[1 .. $#_],
-        );
+        if( wantarray ) {
+            my @ret = eval { $handle->$sub(
+                    (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
+                    @_[1 .. $#_],
+                );
+            };
+
+            croak $@ if $@;
+
+            return @ret;
+        } else {
+            my $ret = eval { $handle->$sub(
+                    (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
+                    @_[1 .. $#_],
+                );
+            };
+
+            croak $@ if $@;
+
+            return $ret;
+        }
 
     } else {
         croak "$sub is not a member of " . ref($handle);
