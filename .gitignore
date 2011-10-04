@@ -1,5 +1,7 @@
-Makefile
 blib
+Makefile
+Makefile.old
+MYMETA.json
+MYMETA.yml
 pm_to_blib
 testdb
-Makefile.old
