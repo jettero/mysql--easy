@@ -115,7 +115,7 @@ use common::sense;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1010";
+our $VERSION = "2.1011";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
@@ -351,9 +351,15 @@ sub handle {
     $this->{dbase} =      "test" unless $this->{dbase};
     $this->{trace} =           0 unless $this->{trace};
 
-    $this->{dbh}->disconnect if $this->{dbh}; # curiously, sometimes we do have a handle, but the ping doesn't work
-                                              # if we replace the handle, DBI complains about not disconnecting.
-                                              # Heh.  It's gone dude, let it go.
+    if( $this->{dbh} ) {
+        eval {
+            local $SIG{__WARN__} = sub {};  # Curiously, sometimes we do have a handle, but the ping doesn't work.
+                                            # If we replace the handle, DBI complains about not disconnecting.
+                                            # If we disconnect, it complains about not desting statement handles.
+                                            # Heh.  It's gone dude, let it go.
+            $this->{dbh}->disconnect;
+        };
+    }
 
     $this->{dbh} =
     DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}",
