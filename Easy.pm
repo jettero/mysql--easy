@@ -115,7 +115,7 @@ use common::sense;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1011";
+our $VERSION = "2.1012";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
@@ -214,7 +214,7 @@ sub new {
     $this = bless {}, $this;
 
     $this->{dbase} = shift; croak "dbase = '$this->{dbase}'?" unless $this->{dbase};
-    $this->{dbh} = $this->{dbase} if ref($this->{dbase}) eq "DBI::db";
+    $this->{dbh} = $this->{dbase} if ref($this->{dbase}) and $this->{dbase}->isa("DBI::db");
 
     my $args = shift;
     my $tr   = ref($args) ? delete $args->{trace} : $args;
