@@ -115,7 +115,7 @@ use common::sense;
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1012";
+our $VERSION = "2.1013";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
@@ -298,6 +298,17 @@ sub firstval {
     croak $@ unless $r;
 
     return $r->[0];
+}
+# }}}
+# firstrow {{{
+sub firstval {
+    my $this = shift;
+    my $query = shift;
+
+    my $r = eval { $this->handle->selectrow_arrayref($query, undef, @_) };
+    croak $@ unless $r;
+
+    return wantarray ? @$r : $r;
 }
 # }}}
 # thread_id {{{

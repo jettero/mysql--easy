@@ -98,6 +98,12 @@ returns an arrayref of values for the sql.
 Returns the value asked for or C<undef> (as a scalar) if the query didn't work
 out.
 
+=item B<firstrow>
+
+   $val = $dbo->firstrow("select * from table where unique_id=?", $id);
+
+Returns the first row found as an array or as an arrayref.
+
 =item B<last_insert_id>
 
    $id = $dbo->last_insert_id;
