@@ -301,7 +301,7 @@ sub firstval {
 }
 # }}}
 # firstrow {{{
-sub firstval {
+sub firstrow {
     my $this = shift;
     my $query = shift;
 
