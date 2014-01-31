@@ -111,11 +111,12 @@ package MySQL::Easy;
 
 use Carp;
 use common::sense;
+use Scalar::Util qw(blessed);
 
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1014";
+our $VERSION = "2.1015";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
@@ -141,16 +142,12 @@ sub AUTOLOAD {
             no strict 'refs';
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
+            $_[0] = $_[0]->{sth} if @_ and blessed $_[0] and $_[0]->isa("MySQL::Easy::sth");
+
             if( wantarray ) {
-                @ret = $handle->$sub(
-                    (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
-                    @_[1 .. $#_],
-                );
+                @ret = $handle->$sub(@_);
             } else {
-                $ret = $handle->$sub(
-                    (ref($_[0]) eq "MySQL::Easy::sth" ? $_[0]->{sth} : $_[0]), # cheap and not "gone away" recoverable
-                    @_[1 .. $#_],
-                );
+                $ret = $handle->$sub(@_);
             }
         };
 
