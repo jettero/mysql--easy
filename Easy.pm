@@ -116,7 +116,7 @@ use Scalar::Util qw(blessed);
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1015";
+our $VERSION = "2.1017";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
