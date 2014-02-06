@@ -130,6 +130,8 @@ sub AUTOLOAD {
     my $this = shift;
     my $sub  = $AUTOLOAD;
 
+    # do { local $" = "><"; warn "<@_>\n" };
+
     $sub = $1 if $sub =~ m/::(\w+)$/;
 
     my $handle = $this->handle;
