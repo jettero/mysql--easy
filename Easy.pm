@@ -112,6 +112,7 @@ package MySQL::Easy;
 use Carp;
 use common::sense;
 use Scalar::Util qw(blessed);
+use overload fallback=>1, '""' => sub { ref($_[0]) . "($_[0]{dbase})" };
 
 use DBI;
 
