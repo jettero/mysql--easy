@@ -109,7 +109,7 @@ sub DESTROY {
 
 package MySQL::Easy;
 
-use Carp;
+use Carp ();
 use common::sense;
 use Scalar::Util qw(blessed);
 use overload fallback=>1, '""' => sub { ref($_[0]) . "($_[0]{dbase})" };
@@ -126,16 +126,22 @@ our @MY_CNF_LOCATIONS = (
     $ENV{$CNF_ENV}, "$ENV{$HOME_ENV}/.my.cnf", "/etc/mysql-easy.cnf", "/etc/mysql/my.cnf"
 );
 
-# {{{ sub mycroak($@)
-sub mycroak($@) {
-    my ($error, @caller) = @_;
+# {{{ sub mycroak
+sub mycroak(;$) {
+    my $error = shift;
+
+    my $i = 1;
+    my @c = caller(  $i);
+       @c = caller(++$i) while $c[0] eq __PACKAGE__;
+
+    chomp $error;
     
     my $file = __FILE__;
-    #arn "<< $error >> ccc=@caller file=$file\n";
-    $error =~ s{\Q$file\E\s+line\s+\d+}{$caller[1] line $caller[2]}g;
-    #arn ">> $error <<\n";
+    #error =~ s{\Q$file\E\s+line\s+\d+}{$c[1] line $c[2] [$i]}g;
+    $error =~ s{\s+at\s+\Q$file\E\s+line\s+\d+\.}{}g;
+    $error =~ s{\s+\(prepared at $c[1] line $c[2]\)}{}; # this would be a dup error in this case
 
-    croak $error;
+    Carp::croak($error);
 }
 
 # }}}
@@ -177,17 +183,15 @@ sub AUTOLOAD {
 
         if( $err ) {
             1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
-
-            # DBD::mysql::db selectall_hashref failed: You have an error in your SQL syntax; check the manual that corresponds to your MySQL serve
             $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
 
-            croak "ERROR executing $sub(): $err";
+            mycroak "ERROR executing $sub(): $err";
         }
 
         return ($wa ? @ret : $ret);
 
     } else {
-        croak "$sub is not a member of " . ref($handle);
+        mycroak "$sub is not a member of " . ref($handle);
     }
 }
 # }}}
@@ -227,7 +231,7 @@ sub new {
 
     $this = bless {}, $this;
 
-    $this->{dbase} = shift; croak "dbase = '$this->{dbase}'?" unless $this->{dbase};
+    $this->{dbase} = shift; mycroak "dbase = '$this->{dbase}'?" unless $this->{dbase};
     $this->{dbh} = $this->{dbase} if ref($this->{dbase}) and $this->{dbase}->isa("DBI::db");
 
     my $args = shift;
@@ -243,7 +247,7 @@ sub new {
                 $this->$f($args->{$k});
 
             } else {
-                croak "unrecognized attribute: $k"
+                mycroak "unrecognized attribute: $k"
             }
         }
     }
@@ -255,7 +259,7 @@ sub new {
 sub do {
     my $this = shift; return unless @_;
     my $sql  = shift;
-    my $r; eval { $r = $this->ready($sql)->execute(@_); 1 } or mycroak $@, caller;
+    my $r; eval { $r = $this->ready($sql)->execute(@_); 1 } or mycroak $@;
     return $r;
 }
 # }}}
@@ -286,8 +290,10 @@ sub unlock {
 sub ready {
     my $this = shift;
 
+    my $i = 0;
     my $sth = MySQL::Easy::sth->new( $this, @_ );
-       $sth->{_ready_caller} = [ caller ];
+       $sth->{_ready_caller} = [ caller(  $i) ];
+       $sth->{_ready_caller} = [ caller(++$i) ] while $sth->{_ready_caller}[0] eq __PACKAGE__;
 
     return $sth;
 }
@@ -299,7 +305,7 @@ sub firstcol {
 
     my $r;
     eval { $r = $this->selectcol_arrayref($query, undef, @_); 1 }
-        or croak $@;
+        or mycroak $@;
 
     return wantarray ? @$r : $r;
 }
@@ -311,7 +317,7 @@ sub firstval {
 
     my $r;
     eval { $r = $this->selectcol_arrayref($query, undef, @_); 1 }
-        or croak $@;
+        or mycroak $@;
 
     return $r->[0];
 }
@@ -323,7 +329,7 @@ sub firstrow {
 
     my $r;
     eval { $r = $this->selectrow_arrayref($query, undef, @_); 1 }
-        or croak $@;
+        or mycroak $@;
 
     return wantarray ? @$r : $r;
 }
@@ -391,7 +397,7 @@ sub handle {
 
         });
 
-    croak "failed to generate connection: " . DBI->errstr unless $this->{dbh};
+    mycroak "failed to generate connection: " . DBI->errstr unless $this->{dbh};
 
     $this->{dbh}->trace($this->{trace});
 
