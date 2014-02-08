@@ -126,6 +126,20 @@ our @MY_CNF_LOCATIONS = (
     $ENV{$CNF_ENV}, "$ENV{$HOME_ENV}/.my.cnf", "/etc/mysql-easy.cnf", "/etc/mysql/my.cnf"
 );
 
+# {{{ sub mycroak($@)
+sub mycroak($@) {
+    my ($error, @caller) = @_;
+    
+    my $file = __FILE__;
+    #arn "<< $error >> ccc=@caller file=$file\n";
+    $error =~ s{\Q$file\E\s+line\s+\d+}{$caller[1] line $caller[2]}g;
+    #arn ">> $error <<\n";
+
+    croak $error;
+}
+
+# }}}
+
 # AUTOLOAD {{{
 sub AUTOLOAD {
     my $this = shift;
@@ -240,8 +254,8 @@ sub new {
 # do {{{
 sub do {
     my $this = shift; return unless @_;
-
-    my $r; eval { $r = $this->ready(shift)->execute(@_) }; croak $this->errstr if $@;
+    my $sql  = shift;
+    my $r; eval { $r = $this->ready($sql)->execute(@_); 1 } or mycroak $@, caller;
     return $r;
 }
 # }}}
@@ -283,8 +297,9 @@ sub firstcol {
     my $this = shift;
     my $query = shift;
 
-    my $r = eval { $this->handle->selectcol_arrayref($query, undef, @_) };
-    croak $@ unless $r;
+    my $r;
+    eval { $r = $this->selectcol_arrayref($query, undef, @_); 1 }
+        or croak $@;
 
     return wantarray ? @$r : $r;
 }
@@ -294,8 +309,9 @@ sub firstval {
     my $this = shift;
     my $query = shift;
 
-    my $r = eval { $this->handle->selectcol_arrayref($query, undef, @_) };
-    croak $@ unless $r;
+    my $r;
+    eval { $r = $this->selectcol_arrayref($query, undef, @_); 1 }
+        or croak $@;
 
     return $r->[0];
 }
@@ -305,8 +321,9 @@ sub firstrow {
     my $this = shift;
     my $query = shift;
 
-    my $r = eval { $this->handle->selectrow_arrayref($query, undef, @_) };
-    croak $@ unless $r;
+    my $r;
+    eval { $r = $this->selectrow_arrayref($query, undef, @_); 1 }
+        or croak $@;
 
     return wantarray ? @$r : $r;
 }
@@ -324,21 +341,7 @@ sub last_insert_id {
 
     # return $this->firstcol("select last_insert_id()")->[0];
     # return $this->handle->{mysql_insertid};
-    return $this->handle->last_insert_id(undef,undef,undef,undef);
-}
-# }}}
-# errstr (needs to be here, called from AUTOLOAD) {{{
-sub errstr {
-    my $this = shift;
-
-    return $this->handle->errstr;
-}
-# }}}
-# trace (needs to be here, called from AUTOLOAD) {{{
-sub trace {
-    my $this = shift;
-
-    $this->handle->trace( @_ );
+    return $this->last_insert_id(undef,undef,undef,undef);
 }
 # }}}
 # DESTROY {{{

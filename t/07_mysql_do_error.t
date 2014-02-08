@@ -16,5 +16,6 @@ if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     my $dbo = new MySQL::Easy("scratch");
 
     eval { $dbo->do("syntax error!!") };
+    #arn " \e[1;33m<<$@>>\e[m\n";
     ok( $@, qr(error in your SQL syntax) );
 }
