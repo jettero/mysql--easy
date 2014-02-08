@@ -268,7 +268,7 @@ sub light_lock {
     my $this   = shift; return unless @_;
     my $tolock = join(", ", map("$_ read", @_));
 
-    $this->handle->do("lock tables $tolock");
+    $this->do("lock tables $tolock");
 }
 # }}}
 # lock {{{
@@ -276,14 +276,14 @@ sub lock {
     my $this   = shift; return unless @_;
     my $tolock = join(", ", map("$_ write", @_));
 
-    $this->handle->do("lock tables $tolock");
+    $this->do("lock tables $tolock");
 }
 # }}}
 # unlock {{{
 sub unlock {
     my $this = shift;
 
-    $this->handle->do("unlock tables");
+    $this->do("unlock tables");
 }
 # }}}
 # ready {{{
