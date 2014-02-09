@@ -28,16 +28,19 @@ sub bind_execute {
 # }}}
 # AUTOLOAD {{{
 sub AUTOLOAD {
-    my $this = shift;
-    my $sub  = $AUTOLOAD;
+    my $_self = shift;
+    my $sub = $AUTOLOAD;
+       $sub = $1 if $sub =~ m/::(\w+)$/;
 
-    return unless $this->{sth};
-    # croak "this sth is defunct.  please don't call things on it." unless $this->{sth};
+    return unless $_self->{sth}; # I should be dead?
+    croak "$sub is not a member of " . ref($_self->{sth}) unless $_self->{sth}->can($sub);
 
-    $sub = $1 if $sub =~ m/::(\w+)$/;
+    *{ __PACKAGE__ . "::$sub" } = sub {
+        my $this = shift;
+        my $tries = 2;
 
-    my $tries = 2;
-    if( $this->{sth}->can($sub) ) {
+        return unless $this->{sth}; # I should be dead?
+
         my $wa = wantarray;
         my ($err, $warn, $ret, @ret);
 
@@ -88,10 +91,9 @@ sub AUTOLOAD {
         }
 
         return ($wa ? @ret : $ret);
+    };
 
-    } else {
-        croak "$sub is not a member of " . ref($this->{sth});
-    }
+    return $_self->$sub(@_);
 }
 # }}}
 # DESTROY {{{
