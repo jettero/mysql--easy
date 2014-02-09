@@ -31,8 +31,8 @@ if( getcwd() eq "/home/jettero/code/cpan/easy" ) {
     ok( $x, undef );
     ok( $@, qr(at $f line $exec_line) );
 
-    @a = $@ =~ m/\b(at\s+line\s+\d+|at\s+\S+\s+line\s+\d+)\b/g;
-    ok( 0+@a, 1 );
+    @a = $@ =~ m/(at\s+(?:\S+\s+)?line\s+\d+)/g;
+    ok( 0+@a, 2 );
 
 } else {
     plan tests => 1;

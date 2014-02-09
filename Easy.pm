@@ -175,7 +175,9 @@ sub AUTOLOAD {
             } else {
                 $ret = $handle->$sub(@_);
             }
-        1};
+
+            !$warn
+        };
 
         unless( $eval_result ) {
             $err = $@;
@@ -185,9 +187,7 @@ sub AUTOLOAD {
                 chomp $err;
             }
 
-            # I want to see this once before I fix it
-            # $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
-
+            $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
             mycroak "ERROR executing $sub(): $err";
         }
 
