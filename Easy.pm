@@ -353,7 +353,7 @@ sub last_insert_id {
 
     # return $this->firstcol("select last_insert_id()")->[0];
     # return $this->handle->{mysql_insertid};
-    return $this->last_insert_id(undef,undef,undef,undef);
+    return $this->handle->last_insert_id(undef,undef,undef,undef);
 }
 # }}}
 # DESTROY {{{
