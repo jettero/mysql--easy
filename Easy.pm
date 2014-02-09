@@ -148,51 +148,55 @@ sub mycroak(;$) {
 
 # AUTOLOAD {{{
 sub AUTOLOAD {
-    my $this = shift;
-    my $sub  = $AUTOLOAD;
+    my $_self = shift;
+    my $sub   = $AUTOLOAD;
+       $sub   = $1 if $sub =~ m/::(\w+)$/;
 
-    # do { local $" = "><"; warn "<@_>\n" };
+    {
+        my $handle = $_self->handle;
+        mycroak "$sub is not a member of " . ref($handle) unless $handle->can($sub);
+    }
 
-    $sub = $1 if $sub =~ m/::(\w+)$/;
+    *{ __PACKAGE__ . "::$sub" } = sub {
+        my $this = shift;
+        my $handle = $this->handle;
 
-    my $handle = $this->handle;
-
-    if( $handle->can($sub) ) {
         my $wa = wantarray;
         my ($err, $warn, $ret, @ret);
 
-        EVAL_IT: eval {
-            no strict 'refs';
+        EVAL_IT: my $eval_result = eval {
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
             $_[0] = $_[0]->{sth} if @_ and blessed $_[0] and $_[0]->isa("MySQL::Easy::sth");
 
             if( wantarray ) {
                 @ret = $handle->$sub(@_);
+
             } else {
                 $ret = $handle->$sub(@_);
             }
-        };
+        1};
 
-        $err = $@;
+        unless( $eval_result ) {
+            $err = $@;
 
-        if( $warn and not $err ) {
-            $err = $warn;
-            chomp $err;
-        }
+            if( $warn and not $err ) {
+                $err = $warn;
+                chomp $err;
+            }
 
-        if( $err ) {
-            1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
-            $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
+            # I want to see this once before I fix it
+            # $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
 
             mycroak "ERROR executing $sub(): $err";
         }
 
         return ($wa ? @ret : $ret);
+    };
 
-    } else {
-        mycroak "$sub is not a member of " . ref($handle);
-    }
+    #arn "created method $sub, calling";
+
+    return $_self->$sub(@_);
 }
 # }}}
 
