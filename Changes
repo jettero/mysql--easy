@@ -1,3 +1,6 @@
+2.1017: Sat Feb 08 2014
+   - make the autoloads actually autoload
+
 2.1015: Thu Jan 30 2014
    - improved autoloader for dbh
 

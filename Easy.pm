@@ -119,7 +119,7 @@ use overload fallback=>1, '""' => sub { ref($_[0]) . "($_[0]{dbase})" };
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1017";
+our $VERSION = "2.1018";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
