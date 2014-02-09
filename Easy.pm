@@ -138,10 +138,11 @@ sub mycroak(;$) {
 
     chomp $error;
     
-    my $file = __FILE__;
-    #error =~ s{\Q$file\E\s+line\s+\d+}{$c[1] line $c[2] [$i]}g;
-    $error =~ s{\s+at\s+\Q$file\E\s+line\s+\d+\.}{}g;
+    1 while
+    $error =~ s{\s+at\s+\S+\s+line\s+\d+\.}{}g;
     $error =~ s{\s+\(prepared at $c[1] line $c[2]\)}{}; # this would be a dup error in this case
+
+    #arn "<<<$error\[$i]>>>";
 
     Carp::croak($error);
 }
