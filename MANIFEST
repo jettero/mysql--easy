@@ -6,6 +6,7 @@ MANIFEST
 README
 t/01_load.t
 t/05_mysql_connect.t
+t/06_last_insert_id.t
 t/07_mysql_do_error.t
 t/10_connection_loss.t
 t/15_warnings.t
