@@ -75,7 +75,7 @@ sub AUTOLOAD {
             # ERROR executing execute(): DBD::mysql::st execute failed: You have an error in your SQL syntax; check the manual
             $err =~ s/DBD::mysql::sth? execute failed:\s*//;
 
-            if( $err =~ m/MySQL server has gone away/ ) {
+            if( $err =~ m/(?:MySQL server has gone away|Lost connection)/ ) {
                 if( $sub eq "execute" ) {
                     $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
                     $warn = undef;
