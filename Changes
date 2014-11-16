@@ -1,3 +1,6 @@
+2.1019: Sun Nov 16 2014
+   - try to repair connections on dhb methods like selectall_arrayref
+
 2.1017: Sat Feb 08 2014
    - make the autoloads actually autoload
 

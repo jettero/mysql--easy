@@ -26,6 +26,15 @@ sub bind_execute {
     return $this;
 }
 # }}}
+# {{{ sub repair_statement
+sub repair_statement {
+    my $this = shift;
+
+    $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
+    return $this;
+}
+
+# }}}
 # AUTOLOAD {{{
 sub AUTOLOAD {
     my $_self = shift;
@@ -77,7 +86,7 @@ sub AUTOLOAD {
 
             if( $err =~ m/(?:MySQL server has gone away|Lost connection)/ ) {
                 if( $sub eq "execute" ) {
-                    $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
+                    $this->repair_statement;
                     $warn = undef;
 
                     goto EVAL_IT if ((--$tries) > 0);
@@ -119,7 +128,7 @@ use overload fallback=>1, '""' => sub { ref($_[0]) . "($_[0]{dbase})" };
 use DBI;
 
 our $AUTOLOAD;
-our $VERSION = "2.1018";
+our $VERSION = "2.1019";
 our $CNF_ENV = "ME_CNF";
 our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
@@ -137,7 +146,7 @@ sub mycroak(;$) {
        @c = caller(++$i) while $c[0] eq __PACKAGE__;
 
     chomp $error;
-    
+
     1 while
     $error =~ s{\s+at\s+\S+\s+line\s+\d+\.}{}g;
     $error =~ s{\s+\(prepared at $c[1] line $c[2]\)}{}; # this would be a dup error in this case
@@ -166,17 +175,20 @@ sub AUTOLOAD {
 
         my $wa = wantarray;
         my ($err, $warn, $ret, @ret);
+        my @oargs = @_;
+        my $tries = 2;
 
         EVAL_IT: my $eval_result = eval {
+            my @cargs = @oargs;
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
-            $_[0] = $_[0]->{sth} if @_ and blessed $_[0] and $_[0]->isa("MySQL::Easy::sth");
+            $cargs[0] = $cargs[0]->{sth} if @cargs and blessed $cargs[0] and $cargs[0]->isa("MySQL::Easy::sth");
 
             if( wantarray ) {
-                @ret = $handle->$sub(@_);
+                @ret = $handle->$sub(@cargs);
 
             } else {
-                $ret = $handle->$sub(@_);
+                $ret = $handle->$sub(@cargs);
             }
 
             !$warn
@@ -184,6 +196,18 @@ sub AUTOLOAD {
 
         unless( $eval_result ) {
             $err = $@;
+
+            if( $err =~ m/(?:MySQL server has gone away|Lost connection)/ ) {
+                if( blessed $oargs[0] ) {
+                    if( $oargs[0]->isa("MySQL::Easy::sth") ) {
+                        $oargs[0]->repair_statement;
+
+                    } else {
+                        warn "argument to $sub is blessed, but is not a MySQL::Easy::sth, connection rebuild will probably fail";
+                    }
+                }
+                goto EVAL_IT if ((--$tries) > 0);
+            }
 
             if( $warn and not $err ) {
                 $err = $warn;
