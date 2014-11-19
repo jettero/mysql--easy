@@ -1,3 +1,6 @@
+2.1020: Wed Nov 19 2014
+   - need more of this easy::st logic to recover from these stupid connection crashes
+
 2.1019: Sun Nov 16 2014
    - try to repair connections on dhb methods like selectall_arrayref
 
