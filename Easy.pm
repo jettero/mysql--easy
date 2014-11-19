@@ -179,10 +179,14 @@ sub AUTOLOAD {
         my $tries = 2;
 
         EVAL_IT: my $eval_result = eval {
-            my @cargs = @oargs;
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
-            $cargs[0] = $cargs[0]->{sth} if @cargs and blessed $cargs[0] and $cargs[0]->isa("MySQL::Easy::sth");
+            $oargs[0] = $this->ready($oargs[0]) unless
+                blessed $oargs[0] and $oargs[0]->isa("MySQL::Easy::sth");
+
+            my @cargs = @oargs;
+
+            $cargs[0] = $cargs[0]->{sth};
 
             if( wantarray ) {
                 @ret = $handle->$sub(@cargs);
