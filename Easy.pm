@@ -181,7 +181,7 @@ sub AUTOLOAD {
         EVAL_IT: my $eval_result = eval {
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
-            #$oargs[0] = $this->ready($oargs[0]) unless blessed $oargs[0];
+            $oargs[0] = $this->ready($oargs[0]) unless blessed $oargs[0];
 
             my @cargs = @oargs;
             $cargs[0] = $cargs[0]->{sth} if blessed $cargs[0] and eval { $cargs[0]->{sth} };
