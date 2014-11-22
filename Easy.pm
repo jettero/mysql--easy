@@ -6,6 +6,7 @@ use common::sense;
 
 our $AUTOLOAD;
 our $RESTARTABLE_ERRORS = qr/(?:has gone away|Lost connection)/;
+our $SLEEP_ON_RECONNECT_RETRY = 1;
 
 # new {{{
 sub new {
@@ -92,6 +93,7 @@ sub AUTOLOAD {
                     $this->repair_statement;
                     $warn = undef;
 
+                    sleep $SLEEP_ON_RECONNECT_RETRY if $SLEEP_ON_RECONNECT_RETRY > 0;
                     goto EVAL_IT if ((--$tries) > 0);
 
                 } else {
@@ -208,6 +210,7 @@ sub AUTOLOAD {
                     }
                 }
 
+                sleep $SLEEP_ON_RECONNECT_RETRY if $SLEEP_ON_RECONNECT_RETRY > 0;
                 goto EVAL_IT if ((--$tries) > 0);
             }
 
