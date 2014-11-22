@@ -84,7 +84,7 @@ sub AUTOLOAD {
             # ERROR executing execute(): DBD::mysql::st execute failed: You have an error in your SQL syntax; check the manual
             $err =~ s/DBD::mysql::sth? execute failed:\s*//;
 
-            if( $err =~ m/(?:MySQL server has gone away|Lost connection)/ ) {
+            if( $err =~ m/(?:has gone away|Lost connection)/ ) {
                 if( $sub eq "execute" ) {
                     $this->repair_statement;
                     $warn = undef;
@@ -199,7 +199,7 @@ sub AUTOLOAD {
         unless( $eval_result ) {
             $err = $@;
 
-            if( $err =~ m/(?:MySQL server has gone away|Lost connection)/ ) {
+            if( $err =~ m/(?:has gone away|Lost connection)/ ) {
                 if( blessed $oargs[0] ) {
                     if( $oargs[0]->isa("MySQL::Easy::sth") ) {
                         $oargs[0]->repair_statement;
