@@ -32,6 +32,8 @@ sub repair_statement {
     my $this = shift;
 
     $this->{sth} = $this->{dbo}->handle->prepare( $this->{s} );
+    $this->{repair} ++;
+
     return $this;
 }
 
