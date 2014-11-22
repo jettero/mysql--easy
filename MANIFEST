@@ -14,4 +14,5 @@ t/20_getput.t
 t/25_ready_selectall.t
 t/30_utf8.t
 t/35_error_propagation.t
+t/80_trace.t
 t/85_test_reconnect.t
