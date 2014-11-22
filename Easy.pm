@@ -182,12 +182,11 @@ sub AUTOLOAD {
         my $tries = 2;
 
         EVAL_IT: my $eval_result = eval {
+            $warn = undef;
             local $SIG{__WARN__} = sub { $warn = "@_"; };
 
-            $oargs[0] = $this->ready($oargs[0]) unless blessed $oargs[0];
-
             my @cargs = @oargs;
-            $cargs[0] = $cargs[0]->{sth} if blessed $cargs[0] and eval { $cargs[0]->{sth} };
+            $cargs[0] = $cargs[0]->{sth} if blessed $cargs[0] and exists $cargs[0]->{sth};
 
             if( wantarray ) {
                 @ret = $handle->$sub(@cargs);
@@ -200,17 +199,15 @@ sub AUTOLOAD {
         };
 
         unless( $eval_result ) {
-            $err = $@;
+            $err = $warn;
 
             if( $err =~ $RESTARTABLE_ERRORS ) {
                 if( blessed $oargs[0] ) {
                     if( $oargs[0]->isa("MySQL::Easy::sth") ) {
                         $oargs[0]->repair_statement;
-
-                    } else {
-                        warn "argument to $sub is blessed, but is not a MySQL::Easy::sth, connection rebuild will probably fail";
                     }
                 }
+
                 goto EVAL_IT if ((--$tries) > 0);
             }
 
