@@ -2,6 +2,9 @@
    - need more of this easy::st logic to recover from these stupid connection crashes
    - I'm still having all sorts of connection problems on that one host, and I found
      several places where connections drop inexplicably.  building tests.
+   - I also increased the number of reconnect retries and the wait time between the retries
+     (server outages tend to be bursty … unless the program should simply crash, it's probably
+      better to just wait until it's back.)
 
 2.1019: Sun Nov 16 2014
    - try to repair connections on dhb methods like selectall_arrayref

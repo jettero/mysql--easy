@@ -5,8 +5,9 @@ use Carp;
 use common::sense;
 
 our $AUTOLOAD;
-our $RESTARTABLE_ERRORS = qr/(?:has gone away|Lost connection)/;
+our $RESTARTABLE_ERRORS       = qr/(?:has gone away|Lost connection)/;
 our $SLEEP_ON_RECONNECT_RETRY = 1;
+our $RECONNECT_RETRIES        = 5;
 
 # new {{{
 sub new {
@@ -50,7 +51,7 @@ sub AUTOLOAD {
 
     *{ __PACKAGE__ . "::$sub" } = sub {
         my $this = shift;
-        my $tries = 2;
+        my $tries = $RECONNECT_RETRIES;
 
         return unless $this->{sth}; # I should be dead?
 
@@ -94,7 +95,8 @@ sub AUTOLOAD {
                     $warn = undef;
 
                     sleep $SLEEP_ON_RECONNECT_RETRY if $SLEEP_ON_RECONNECT_RETRY > 0;
-                    goto EVAL_IT if ((--$tries) > 0);
+                    goto EVAL_IT if ((--$tries) >= 0);
+                    $err .= " ($tries/$RECONNECT_RETRIES)";
 
                 } else {
                     croak "MySQL::Easy::sth can only recover from connection problems during execute(): $err $p";
@@ -181,7 +183,7 @@ sub AUTOLOAD {
         my $wa = wantarray;
         my ($err, $warn, $ret, @ret);
         my @oargs = @_;
-        my $tries = 2;
+        my $tries = $RECONNECT_RETRIES;
 
         EVAL_IT: my $eval_result = eval {
             $warn = undef;
@@ -211,7 +213,8 @@ sub AUTOLOAD {
                 }
 
                 sleep $SLEEP_ON_RECONNECT_RETRY if $SLEEP_ON_RECONNECT_RETRY > 0;
-                goto EVAL_IT if ((--$tries) > 0);
+                goto EVAL_IT if ((--$tries) >= 0);
+                $err .= " ($tries/$RECONNECT_RETRIES)";
             }
 
             if( $warn and not $err ) {
