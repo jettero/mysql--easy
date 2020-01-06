@@ -86,8 +86,8 @@ sub AUTOLOAD {
 
             1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
 
-            # ERROR executing execute(): DBD::mariadb::st execute failed: You have an error in your SQL syntax; check the manual
-            $err =~ s/DBD::mariadb::sth? execute failed:\s*//;
+            # ERROR executing execute(): DBD::MariaDB::st execute failed: You have an error in your SQL syntax; check the manual
+            $err =~ s/DBD::MariaDB::sth? execute failed:\s*//;
 
             if( $err =~ $RESTARTABLE_ERRORS ) {
                 if( $sub eq "execute" ) {
@@ -222,7 +222,7 @@ sub AUTOLOAD {
                 chomp $err;
             }
 
-            $err =~ s/DBD::mariadb::dbh? \S+ failed:\s*//;
+            $err =~ s/DBD::MariaDB::dbh? \S+ failed:\s*//;
             mycroak "ERROR executing $sub(): $err";
         }
 
@@ -420,8 +420,12 @@ sub handle {
         };
     }
 
-    $this->{dbh} =
-    DBI->connect("DBI:mariadb:$this->{dbase}:host=$this->{host}:port=$this->{port}",
+    my $dsn = "DBI:MariaDB:$this->{dbase}:host=$this->{host}";
+    unless( $this->{host} =~ m/localhost/ ) {
+        $dsn .= ":port=$this->{port}";
+    }
+
+    $this->{dbh} = DBI->connect($dsn,
         $this->{user}, $this->{pass}, {
 
             RaiseError => ($this->{raise} ? 1:0),
@@ -429,9 +433,8 @@ sub handle {
 
             AutoCommit => 0,
 
-            mariadb_enable_utf8    => 1,
             mariadb_compression    => 1,
-            mariadb_ssl            => 1,
+            mariadb_ssl            => 0,
             mariadb_auto_reconnect => 1,
 
         });
