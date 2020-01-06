@@ -1,5 +1,5 @@
 
-package MySQL::Easy::sth;
+package MariaDB::Easy::sth;
 
 use Carp;
 use common::sense;
@@ -11,8 +11,8 @@ our $RECONNECT_RETRIES        = 5;
 
 # new {{{
 sub new {
-    my ($class, $mysql_e, $statement) = @_;
-    my $this  = bless { s=>$statement, dbo=>$mysql_e }, $class;
+    my ($class, $mariadb_e, $statement) = @_;
+    my $this  = bless { s=>$statement, dbo=>$mariadb_e }, $class;
 
     $this->{sth} = $this->{dbo}->handle->prepare( $statement );
 
@@ -86,8 +86,8 @@ sub AUTOLOAD {
 
             1 while $err =~ s/\s+at(?:\s+\S+)?\s+line\s+\d+\.?$//;
 
-            # ERROR executing execute(): DBD::mysql::st execute failed: You have an error in your SQL syntax; check the manual
-            $err =~ s/DBD::mysql::sth? execute failed:\s*//;
+            # ERROR executing execute(): DBD::mariadb::st execute failed: You have an error in your SQL syntax; check the manual
+            $err =~ s/DBD::mariadb::sth? execute failed:\s*//;
 
             if( $err =~ $RESTARTABLE_ERRORS ) {
                 if( $sub eq "execute" ) {
@@ -99,7 +99,7 @@ sub AUTOLOAD {
                     $err .= " ($tries/$RECONNECT_RETRIES)";
 
                 } else {
-                    croak "MySQL::Easy::sth can only recover from connection problems during execute(): $err $p";
+                    croak "MariaDB::Easy::sth can only recover from connection problems during execute(): $err $p";
                 }
             }
 
@@ -116,16 +116,16 @@ sub AUTOLOAD {
 sub DESTROY {
     my $this = shift;
 
-    # warn "MySQL::Easy::sth is dying"; # This is here to make sure we don't normally die during global destruction.
+    # warn "MariaDB::Easy::sth is dying"; # This is here to make sure we don't normally die during global destruction.
                                         # Once it appeared to function correctly, it was removed.
                                         # Lastly, we would die during global dest iff: our circular ref from new() were not removed.
-                                        # Although, to be truely circular, the MySQL::Easy would need to point to this ::sth also
+                                        # Although, to be truely circular, the MariaDB::Easy would need to point to this ::sth also
                                         # and it probably doesn't.  So, is this delete paranoid?  Yeah...  meh.
     delete $this->{dbo};
 }
 # }}}
 
-package MySQL::Easy;
+package MariaDB::Easy;
 
 use Carp ();
 use common::sense;
@@ -141,7 +141,7 @@ our $USER_ENV = "ME_USER";
 our $PASS_ENV = "ME_PASS";
 our $HOME_ENV = "HOME";
 our @MY_CNF_LOCATIONS = (
-    $ENV{$CNF_ENV}, "$ENV{$HOME_ENV}/.my.cnf", "/etc/mysql-easy.cnf", "/etc/mysql/my.cnf"
+    $ENV{$CNF_ENV}, "$ENV{$HOME_ENV}/.my.cnf", "/etc/mariadb-easy.cnf", "/etc/mariadb/my.cnf"
 );
 
 # {{{ sub mycroak
@@ -207,7 +207,7 @@ sub AUTOLOAD {
 
             if( $err =~ $RESTARTABLE_ERRORS ) {
                 if( blessed $oargs[0] ) {
-                    if( $oargs[0]->isa("MySQL::Easy::sth") ) {
+                    if( $oargs[0]->isa("MariaDB::Easy::sth") ) {
                         $oargs[0]->repair_statement;
                     }
                 }
@@ -222,7 +222,7 @@ sub AUTOLOAD {
                 chomp $err;
             }
 
-            $err =~ s/DBD::mysql::dbh? \S+ failed:\s*//;
+            $err =~ s/DBD::mariadb::dbh? \S+ failed:\s*//;
             mycroak "ERROR executing $sub(): $err";
         }
 
@@ -240,7 +240,7 @@ sub check_warnings {
     my $this = shift;
     my $sth  = $this->ready("show warnings");
 
-    # mysql> show warnings;
+    # mariadb> show warnings;
     # +---------+------+------------------------------------------+
     # | Level   | Code | Message                                  |
     # +---------+------+------------------------------------------+
@@ -330,7 +330,7 @@ sub ready {
     my $this = shift;
 
     my $i = 0;
-    my $sth = MySQL::Easy::sth->new( $this, @_ );
+    my $sth = MariaDB::Easy::sth->new( $this, @_ );
        $sth->{_ready_caller} = [ caller(  $i) ];
        $sth->{_ready_caller} = [ caller(++$i) ] while $sth->{_ready_caller}[0] eq __PACKAGE__;
 
@@ -377,7 +377,7 @@ sub firstrow {
 sub thread_id {
     my $this = shift;
 
-    return $this->handle->{mysql_thread_id};
+    return $this->handle->{mariadb_thread_id};
 }
 # }}}
 # last_insert_id {{{
@@ -385,7 +385,7 @@ sub last_insert_id {
     my $this = shift;
 
     # return $this->firstcol("select last_insert_id()")->[0];
-    # return $this->handle->{mysql_insertid};
+    # return $this->handle->{mariadb_insertid};
     return $this->handle->last_insert_id(undef,undef,undef,undef);
 }
 # }}}
@@ -401,7 +401,7 @@ sub handle {
     my $this = shift;
 
     return $this->{dbh} if defined($this->{dbh}) and $this->{dbh}->ping;
-    # warn "WARNING: MySQL::Easy is trying to reconnect (if possible)" if defined $this->{dbh};
+    # warn "WARNING: MariaDB::Easy is trying to reconnect (if possible)" if defined $this->{dbh};
 
     ($this->{user}, $this->{pass}) = $this->unp unless $this->{user} and $this->{pass};
 
@@ -421,7 +421,7 @@ sub handle {
     }
 
     $this->{dbh} =
-    DBI->connect("DBI:mysql:$this->{dbase}:host=$this->{host}:port=$this->{port}",
+    DBI->connect("DBI:mariadb:$this->{dbase}:host=$this->{host}:port=$this->{port}",
         $this->{user}, $this->{pass}, {
 
             RaiseError => ($this->{raise} ? 1:0),
@@ -429,10 +429,10 @@ sub handle {
 
             AutoCommit => 0,
 
-            mysql_enable_utf8    => 1,
-            mysql_compression    => 1,
-            mysql_ssl            => 1,
-            mysql_auto_reconnect => 1,
+            mariadb_enable_utf8    => 1,
+            mariadb_compression    => 1,
+            mariadb_ssl            => 1,
+            mariadb_auto_reconnect => 1,
 
         });
 

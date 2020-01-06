@@ -1,12 +1,12 @@
 =head1 NAME
 
-MySQL::Easy - Perl extension to handle various mundane DBI session related things specific to mysql.
+MariaDB::Easy - Perl extension to handle various mundane DBI session related things specific to mysql.
 
 =head1 SYNOPSIS
 
-  use MySQL::Easy;
+  use MariaDB::Easy;
 
-  my $dbo = MySQL::Easy->new("stocks");
+  my $dbo = MariaDB::Easy->new("stocks");
 
   my $symbols = $dbo->firstcol(
       "select symbol from ohlcv where symbol=?", "msft" );
@@ -31,19 +31,19 @@ I don't remember how I used to live without this...  I do like the way L<DBI>
 and L<DBD::mysql> work, but I wanted something I<slightly> prettier...
 I<slightly> handier.
 
-Here are the functions L<MySQL::Easy> provides:
+Here are the functions L<MariaDB::Easy> provides:
 
 =over
 
 =item B<new>
 
-    $dbo = MySQL::Easy->new( $db_name, $trace )
+    $dbo = MariaDB::Easy->new( $db_name, $trace )
 
 C<$db_name> is the name of the database you're connecting to...  If you don't
 pick anything, it'll pick "test" for you.  C<$trace> is a 1 or false, ... it's
 the L<< DBI->trace()|DBI/trace >> ...
 
-    $dbo = MySQL::Easy->new( $db_name, {user=>"blarg", host=>"whatever"})
+    $dbo = MariaDB::Easy->new( $db_name, {user=>"blarg", host=>"whatever"})
 
 Alternatively, you can pass a hashref of options in place of the trace argument.
 Passing C<< user=>"blarg" >> in this way is the same as calling
@@ -69,7 +69,7 @@ the SQL over and over.  Returns a bool like you'd expect.  Example:
 
     $dbo->unlock;
 
-L<MySQL::Easy> uses only write locks.  Those are the ones where nobody can read
+L<MariaDB::Easy> uses only write locks.  Those are the ones where nobody can read
 or write to the table except the locking thread.  If you need a read lock, let
 me know.  Most probably though, if you're using this, it's a smaller app, and it
 doesn't matter anyway.
@@ -81,7 +81,7 @@ doesn't matter anyway.
    $sth->fetchrow_hashref; # etc...
 
 C<ready()> returns a L<DBI statement handle|DBI/Notation_and_Conventions>,
-mostly.  The L<MySQL::Easy> statement handles automatically recover from
+mostly.  The L<MariaDB::Easy> statement handles automatically recover from
 disconnects.  At the time of this writing, L<DBI> statement handles do not do
 this (although the database handle does).
 
@@ -108,7 +108,7 @@ Returns the first row found as an array or as an arrayref.
 
    $id = $dbo->last_insert_id;
 
-Fetches the last insert id (relating to auto_increment fields) from MySQL.
+Fetches the last insert id (relating to auto_increment fields) from MariaDB.
 
 =item B<trace>
 
@@ -137,12 +137,12 @@ I'll just give this example:
    $dbo->set_host($h); $dbo->set_port($p); 
    $dbo->set_user($U); $dbo->set_pass($p);
 
-The first time you do a L</do>/L</ready>/L</firstcol>/etc, L<MySQL::Easy>
+The first time you do a L</do>/L</ready>/L</firstcol>/etc, L<MariaDB::Easy>
 connects to the database.  You may use these set functions to override values
 found in your C<~/.my.cnf> for user and pass.  They can also be passed during
 the call to L<new>.
 
-L<MySQL::Easy> reads the user and pass from that file.  The host name will
+L<MariaDB::Easy> reads the user and pass from that file.  The host name will
 default to I<localhost> unless explicitly set.
 
 =item B<bind_execute>
@@ -166,7 +166,7 @@ Any functions from L<DBI> will work with the C<$dbo>.
 
 =head1 B<AUTHENTICATION>
 
-L<MySQL::Easy> actually checks a few places for the username and password
+L<MariaDB::Easy> actually checks a few places for the username and password
 (largely so it needn't be included in your script).  These alternate locations
 are checked in the following order until something is found.
 
